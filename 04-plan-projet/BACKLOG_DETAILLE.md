@@ -1,6 +1,6 @@
 # MYTHOS – Backlog Détaillé & Planification des Sprints
 
-> **Date** : 17 Fevrier 2026
+> **Date** : 12 Fevrier 2026
 > **Méthodologie** : Scrum (Agile)
 > **Durée des sprints** : 2 semaines
 > **Outil** : GitHub Projects (Kanban)

@@ -4,7 +4,7 @@
 
 > **Projet** : MYTHOS
 > **Version** : 1.0
-> **Date** : 24 Fevrier 2026
+> **Date** : 13 Fevrier 2026
 > **Equipe** : 4 personnes (Scrum) — Kays ZAHIDI, Samy ZEROUALI, Youri EMMANUEL, Yassir SABBAR
 > **Duree** : 14 semaines (7 sprints de 2 semaines)
 > **Referentiel** : RNCP38822 -- Bloc 1

@@ -2,7 +2,7 @@
 
 **Projet** : MYTHOS - Plateforme web de jeux narratifs multijoueurs avec MJ IA
 **Version** : 1.0
-**Date de creation** : 03/03/2026
+**Date de creation** : 14/02/2026
 **Methodologie** : Scrum (7 sprints de 2 semaines)
 **Perimetre** : 47 tickets | 196 story points
 **Outils de monitoring** : GitHub Projects, UptimeRobot, Google Lighthouse, GreenIT Analysis, WAVE
@@ -71,6 +71,17 @@ Chaque indicateur est documente selon le schema suivant :
 - **Revue des KPI Conformite** : a chaque fin de sprint + audit complet a mi-projet (Sprint 4) et en fin de projet (Sprint 7)
 - **Responsable global du suivi** : Samy (SM) / Kays (PO)
 - **Outil de centralisation** : GitHub Projects (vues personnalisees) + tableur de suivi
+
+### 1.5 Repartition des KPI par categorie
+
+Le projet MYTHOS s'appuie sur 23 indicateurs de performance repartis en trois categories complementaires. Le diagramme ci-dessous illustre cette repartition equilibree entre le pilotage Scrum, la qualite technique du produit et la conformite reglementaire.
+
+```mermaid
+pie title Repartition des 23 KPI par categorie
+    "Projet - Pilotage Scrum (PRJ-001 a PRJ-009)" : 9
+    "Produit - Qualite technique (PROD-001 a PROD-008)" : 8
+    "Conformite - RGPD / WCAG / GreenIT / ANSSI (CONF-001 a CONF-006)" : 6
+```
 
 ---
 

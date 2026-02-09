@@ -2,7 +2,7 @@
 
 > **Projet** : MYTHOS -- Plateforme de jeux narratifs multijoueur avec IA Maitre du Jeu
 > **Version** : 1.0
-> **Date** : 19 Fevrier 2026
+> **Date** : 13 Fevrier 2026
 > **Budget total previsionnel** : 308 EUR
 > **Valorisation projet (TJM fictif)** : ~134 400 EUR
 > **Contexte** : Workshop 5A TL -- S1 -- Bloc 1 RNCP38822
@@ -1033,6 +1033,6 @@ A remplir a chaque Sprint Review :
 
 ---
 
-*Document genere le 09/02/2026. Derniere mise a jour : 09/02/2026.*
+*Document genere le 13/02/2026. Derniere mise a jour : 13/02/2026.*
 *Responsable : Product Owner / Scrum Master*
 *Prochaine revue : Sprint Review Sprint 0 (21/02/2026)*

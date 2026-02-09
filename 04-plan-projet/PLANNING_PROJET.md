@@ -2,7 +2,7 @@
 
 > **Projet** : MYTHOS -- Plateforme de jeux narratifs multijoueur avec IA Maitre du Jeu
 > **Version** : 1.0
-> **Date** : 18 Fevrier 2026
+> **Date** : 12 Fevrier 2026
 > **Methodologie** : Scrum (Agile)
 > **Duree totale** : 14 semaines (7 sprints de 2 semaines)
 > **Equipe** : 4 personnes — Kays ZAHIDI, Samy ZEROUALI, Youri EMMANUEL, Yassir SABBAR
@@ -72,6 +72,48 @@ Sem 1-2        Sem 3-4         Sem 5-6        Sem 7-8          Sem 9-10       Se
 ---
 
 ## 2. Diagramme de Gantt
+
+### 2.0 Diagramme de Gantt Mermaid — Vue macro du projet
+
+Le diagramme ci-dessous presente une vue synthetique du calendrier projet sur les 7 sprints, avec les jalons cles et les grandes phases de livraison.
+
+```mermaid
+gantt
+    title Planning MYTHOS — 7 Sprints (14 semaines)
+    dateFormat YYYY-MM-DD
+    axisFormat %d/%m
+
+    section Sprint 0
+    Cadrage & Setup (23 SP)            :s0, 2026-02-10, 14d
+
+    section Sprint 1
+    Fondations + POC IA (29 SP)        :s1, after s0, 14d
+
+    section Sprint 2
+    Game Engine Core (37 SP)           :s2, after s1, 14d
+
+    section Sprint 3
+    Multijoueur + TRIBUNAL (37 SP)     :s3, after s2, 14d
+
+    section Sprint 4
+    DEEP + UI complete (29 SP)         :s4, after s3, 14d
+
+    section Sprint 5
+    Admin + Accessibilite + Deploy (26 SP) :s5, after s4, 14d
+
+    section Buffer
+    Finalisation + Soutenance (15 SP)  :sb, after s5, 14d
+
+    section Jalons
+    M0 Kickoff                         :milestone, 2026-02-10, 0d
+    M1 Cadrage valide                  :milestone, 2026-02-21, 0d
+    M2 POC IA valide                   :milestone, 2026-03-07, 0d
+    M3 Game Engine OK                  :milestone, 2026-03-21, 0d
+    M4 Alpha TRIBUNAL multijoueur      :milestone, 2026-04-04, 0d
+    M5 Beta 2 scenarios jouables       :milestone, 2026-04-18, 0d
+    M6 MVP deploye en production       :milestone, 2026-05-02, 0d
+    M7 Livraison finale                :milestone, 2026-05-16, 0d
+```
 
 ### 2.1 Gantt par Epic et Sprint
 
@@ -1217,6 +1259,6 @@ Un ticket est "Ready" pour etre developpe quand :
 
 ---
 
-*Document genere le 09/02/2026. Derniere mise a jour : 09/02/2026.*
+*Document genere le 12/02/2026. Derniere mise a jour : 12/02/2026.*
 *Responsable : Scrum Master / Product Owner*
 *Prochaine revue : Sprint Review Sprint 0 (21/02/2026)*

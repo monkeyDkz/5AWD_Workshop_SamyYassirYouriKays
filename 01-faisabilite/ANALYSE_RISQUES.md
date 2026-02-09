@@ -8,7 +8,7 @@ On a fait cette analyse de risques tous ensemble lors d'un atelier dedie en debu
 |---|---|
 | **Projet** | MYTHOS |
 | **Version du document** | 1.0 |
-| **Date de redaction** | 04 fevrier 2026 |
+| **Date de redaction** | 09 fevrier 2026 |
 | **Auteur** | Equipe MYTHOS |
 | **Classification** | RNCP — Bloc 1 : Planification et organisation d'un projet de developpement logiciel |
 | **Statut** | En cours de validation |
@@ -473,7 +473,41 @@ Neg.   |           |           |           |           |           |
                               PROBABILITE
 ```
 
-### 3.2 Repartition par niveau de criticite
+### 3.2 Matrice de risques interactive (Probabilite / Impact)
+
+La visualisation ci-dessous positionne chaque risque identifie sur un plan a deux axes (probabilite et impact normalises). Les risques situes dans le quadrant superieur droit necessitent une action immediate, tandis que ceux du quadrant inferieur gauche font l'objet d'une surveillance passive.
+
+```mermaid
+quadrantChart
+    title Matrice Probabilité / Impact des Risques MYTHOS
+    x-axis Faible Impact --> Fort Impact
+    y-axis Faible Probabilité --> Forte Probabilité
+    quadrant-1 Risques critiques
+    quadrant-2 Risques à surveiller
+    quadrant-3 Risques acceptables
+    quadrant-4 Risques à planifier
+    RSQ-T02 Latence IA: [0.80, 0.80]
+    RSQ-O02 Dépassement planning: [0.80, 0.80]
+    RSQ-T01 Qualité narration IA: [0.90, 0.60]
+    RSQ-T05 Injection prompt: [0.60, 0.80]
+    RSQ-T06 Complexité moteur: [0.60, 0.80]
+    RSQ-O04 Scope creep: [0.60, 0.80]
+    RSQ-H01 Burnout équipe: [0.60, 0.80]
+    RSQ-T03 Désync WebSocket: [0.80, 0.60]
+    RSQ-T04 Indispo API LLM: [0.80, 0.60]
+    RSQ-O01 Perte membre: [0.80, 0.60]
+    RSQ-R02 Contenu inapproprié: [0.80, 0.60]
+    RSQ-O03 Conflits équipe: [0.60, 0.60]
+    RSQ-F01 Dépassement budget API: [0.60, 0.60]
+    RSQ-R01 Non-conformité RGPD: [0.60, 0.60]
+    RSQ-H02 Montée compétences: [0.60, 0.60]
+    RSQ-P01 Faible adoption: [0.60, 0.60]
+    RSQ-P02 Expérience inégale: [0.40, 0.80]
+    RSQ-F02 Changement tarifs SaaS: [0.60, 0.40]
+    RSQ-P03 Plagiat produit: [0.60, 0.40]
+```
+
+### 3.3 Repartition par niveau de criticite
 
 | Niveau | Nombre | Risques |
 |---|---|---|
@@ -482,7 +516,7 @@ Neg.   |           |           |           |           |           |
 | **MOYEN** (5-9) | 6 | RSQ-O03, RSQ-F01, RSQ-F02, RSQ-R01, RSQ-H02, RSQ-P01, RSQ-P02, RSQ-P03 |
 | **FAIBLE** (1-4) | 0 | — |
 
-### 3.3 Repartition par categorie
+### 3.4 Repartition par categorie
 
 | Categorie | Nombre | Criticite moyenne |
 |---|---|---|
@@ -880,7 +914,7 @@ COMMENTAIRES ET NOTES
 +--------------------+--------------------------------------------------+
 | Date               | Commentaire                                      |
 +--------------------+--------------------------------------------------+
-| 04/02/2026         | Risque identifie lors de l'etude de faisabilite. |
+| 09/02/2026         | Risque identifie lors de l'etude de faisabilite. |
 |                    | Le POC-1 permettra une premiere mesure reelle.   |
 +--------------------+--------------------------------------------------+
 
@@ -918,5 +952,5 @@ COMMENTAIRES ET NOTES
 ---
 
 *Document redige dans le cadre du Bloc 1 RNCP — Planification et organisation d'un projet de developpement logiciel.*
-*Derniere mise a jour : 04 fevrier 2026.*
+*Derniere mise a jour : 09 fevrier 2026.*
 *Prochaine revue planifiee : Semaine 1, Sprint 0.*

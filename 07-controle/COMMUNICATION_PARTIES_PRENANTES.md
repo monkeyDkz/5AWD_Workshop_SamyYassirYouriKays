@@ -3,7 +3,7 @@
 > **Projet** : MYTHOS -- Plateforme de jeux narratifs multijoueur avec IA Maitre du Jeu
 > **Entreprise** : Mythos Interactive (SAS)
 > **Version** : 1.0
-> **Date** : 06 Mars 2026
+> **Date** : 15 Fevrier 2026
 > **Competence RNCP** : C1.7 -- Supervision et controle du projet
 > **Methodologie** : Scrum (Agile) -- 7 sprints de 2 semaines (14 semaines)
 

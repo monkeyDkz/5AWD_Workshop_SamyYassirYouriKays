@@ -2,7 +2,7 @@
 
 **Projet** : MYTHOS - Plateforme web de jeux narratifs multijoueurs avec MJ IA
 **Version** : 1.0
-**Date de creation** : 04/03/2026
+**Date de creation** : 14/02/2026
 **Methodologie** : Scrum (7 sprints de 2 semaines)
 **Perimetre** : 47 tickets | 196 story points
 

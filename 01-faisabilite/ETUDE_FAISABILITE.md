@@ -6,7 +6,7 @@
 |---|---|
 | **Projet** | MYTHOS |
 | **Version du document** | 1.0 |
-| **Date de rédaction** | 03 février 2026 |
+| **Date de rédaction** | 09 février 2026 |
 | **Auteur** | Kays ZAHIDI — Équipe MYTHOS |
 | **Classification** | RNCP — Bloc 1 : Planification et organisation d'un projet de développement logiciel |
 | **Statut** | En cours de validation |
@@ -379,6 +379,29 @@ Si un POC echoue :
 - POC-2 (Temps reel) : Degrader vers un modele tour par tour avec polling HTTP (perte de l'experience temps reel mais fonctionnalite preservee).
 - POC-3 (Scenario Loader) : Simplifier le format JSON et reduire la flexibilite du moteur.
 
+### 4.6 Diagramme d'etat du cycle de vie d'une partie
+
+Le diagramme ci-dessous modelise les differents etats par lesquels passe une session de jeu MYTHOS, depuis sa creation jusqu'a sa conclusion. Il met en evidence les transitions declenchees par les actions des joueurs, du Game Master IA et les mecanismes de gestion des deconnexions.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Lobby: Création partie
+    Lobby --> EnCours: Tous les joueurs prêts
+    Lobby --> Annulee: Timeout / Hôte quitte
+    EnCours --> Narration: Début du round
+    Narration --> Action: MJ IA a narré
+    Action --> Resolution: Tous les joueurs ont agi
+    Resolution --> Vote: Phase de vote requise
+    Resolution --> Narration: Round suivant
+    Vote --> Narration: Votes comptabilisés
+    EnCours --> Pause: Joueur déconnecté
+    Pause --> EnCours: Reconnexion (< 2min)
+    Pause --> Terminee: Timeout reconnexion
+    Narration --> Terminee: Dernier round résolu
+    Terminee --> [*]
+    Annulee --> [*]
+```
+
 ---
 
 ## 5. Faisabilite organisationnelle
@@ -714,4 +737,4 @@ Les principaux points d'attention sont :
 ---
 
 *Document redige dans le cadre du Bloc 1 RNCP — Planification et organisation d'un projet de developpement logiciel.*
-*Derniere mise a jour : 03 fevrier 2026.*
+*Derniere mise a jour : 09 fevrier 2026.*

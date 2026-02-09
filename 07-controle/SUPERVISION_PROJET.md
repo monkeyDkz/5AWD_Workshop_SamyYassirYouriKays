@@ -3,7 +3,7 @@
 > **Projet** : MYTHOS -- Plateforme de jeux narratifs multijoueur avec IA Maitre du Jeu
 > **Entreprise** : Mythos Interactive (SAS)
 > **Version** : 1.0
-> **Date** : 05 Mars 2026
+> **Date** : 14 Fevrier 2026
 > **Competence RNCP** : C1.7 -- Supervision et controle du projet
 > **Methodologie** : Scrum (Agile) -- 7 sprints de 2 semaines (14 semaines)
 
@@ -353,6 +353,32 @@ Delai : sous 4h                │  Daily standup + Discord     │
 │    resoudre     │                    │ 4. Suivi 4h     │                   │    strategique   │
 │ 4. Documenter   │                    │ 5. Documenter   │                   │ 4. Plan remedia. │
 └─────────────────┘                    └─────────────────┘                   └──────────────────┘
+```
+
+#### Diagramme du processus d'escalade
+
+Le diagramme ci-dessous modelise le flux d'escalade des problemes au sein de l'equipe MYTHOS, depuis la detection initiale jusqu'a la resolution documentee, en passant par les differents niveaux selon la severite et les delais de resolution.
+
+```mermaid
+flowchart TD
+    A[Probleme detecte] --> B{Severite?}
+    B -->|Faible| C[Resolution autonome par le membre]
+    B -->|Moyenne| D[Discussion en Daily Standup]
+    B -->|Haute| E[Alerte Scrum Master - Samy]
+    B -->|Critique| F[Escalade PO - Kays]
+    C --> H[Documentation dans Discord]
+    D --> G{Resolu?}
+    G -->|Oui| H
+    G -->|Non apres 4h| E
+    E --> I{Resolu en 24h?}
+    I -->|Oui| H
+    I -->|Non| F
+    F --> J{Resolu en 48h?}
+    J -->|Oui| H
+    J -->|Non| K[Comite de pilotage + Encadrant]
+    K --> L[Decision strategique]
+    L --> H
+    H --> M[Post-mortem en retrospective]
 ```
 
 ---

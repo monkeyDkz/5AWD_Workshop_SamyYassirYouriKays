@@ -1,6 +1,6 @@
 # MYTHOS - Specifications Fonctionnelles
 
-**Version** : 1.0 | **Date** : 10/02/2026 | **Statut** : Draft
+**Version** : 1.0 | **Date** : 11/02/2026 | **Statut** : Draft
 **Projet** : Plateforme web de jeux narratifs multijoueurs avec IA Game Master
 
 > On a ecrit ces specs fonctionnelles ensemble. Yassir a valide les parcours utilisateurs cote UX, et Samy a pose les contraintes du Game Master IA. Pour les user stories, on a tout discute en equipe et prio avec MoSCoW — ca a pris plus de temps que prevu parce qu'on n'etait pas d'accord sur ce qui etait "Must" vs "Should" pour le chat en jeu.
@@ -169,6 +169,26 @@ Vote (TRIBUNAL)                -> OUI: [EPILOGUE] -> IA genere fin
     -> [Scenarios] -> Lister / Ajouter Pack / Activer-Desactiver
     -> [Stats] -> Joueurs actifs / Parties jouees / Temps moyen
     -> [Config IA] -> Modele / Temperature / Tokens max
+```
+
+### 4.5 Diagramme du parcours joueur principal
+
+Le diagramme ci-dessous synthetise le parcours utilisateur principal sur la plateforme MYTHOS, de l'inscription jusqu'au retour sur le dashboard apres une partie. Il met en evidence les deux chemins d'acces a une session de jeu (creation ou rejoindre) et la boucle de rejouabilite.
+
+```mermaid
+flowchart LR
+    A[Inscription] --> B[Connexion]
+    B --> C[Dashboard]
+    C --> D{Action?}
+    D -->|Creer partie| E[Choix scenario + configuration]
+    D -->|Rejoindre| F[Saisie code salon]
+    E --> G[Lobby - Attente joueurs]
+    F --> G
+    G --> H[Partie en cours - Boucle 6 phases]
+    H --> I[Epilogue + Resultats]
+    I --> J{Rejouer?}
+    J -->|Oui| G
+    J -->|Non| C
 ```
 
 ---
@@ -611,4 +631,4 @@ Les actions des joueurs peuvent augmenter ou diminuer les jauges.
 
 ---
 
-*Document genere le 10/02/2026 - MYTHOS v1.0 MVP*
+*Document genere le 11/02/2026 - MYTHOS v1.0 MVP*

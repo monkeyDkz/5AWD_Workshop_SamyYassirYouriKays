@@ -6,7 +6,7 @@
 | ----------------- | ------------------------------------------- |
 | **Projet**        | MYTHOS                                      |
 | **Version**       | 1.0                                         |
-| **Date**          | 06 fevrier 2026                             |
+| **Date**          | 10 fevrier 2026                             |
 | **Responsable**   | Chef de projet MYTHOS                       |
 | **Equipe**        | 4 personnes — Kays, Samy, Youri, Yassir     |
 | **Duree projet**  | 14 semaines                                 |

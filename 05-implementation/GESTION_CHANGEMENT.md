@@ -4,7 +4,7 @@
 
 > **Projet** : MYTHOS
 > **Version** : 1.0
-> **Date** : 25 Fevrier 2026
+> **Date** : 13 Fevrier 2026
 > **Equipe** : 4 personnes (Scrum) — Kays ZAHIDI, Samy ZEROUALI, Youri EMMANUEL, Yassir SABBAR
 > **Referentiel** : RNCP38822 -- Bloc 1
 > **Duree** : 14 semaines
@@ -258,7 +258,37 @@ Un changement est **reporte** si :
 6. Si accepte : le changement est decompose en tickets et integre au backlog
 ```
 
-### 1.6 Registre des changements
+### 1.6 Synthese visuelle du processus de changement
+
+Le diagramme ci-dessous resume le flux de traitement d'une demande de changement, de sa reception jusqu'a son integration ou son archivage. Il met en evidence les differents chemins selon le type de changement et le score d'impact.
+
+```mermaid
+flowchart TD
+    A[Demande de changement recue] --> B{Type de changement?}
+    B -->|Mineur| C[PR directe via GitHub]
+    B -->|Modere| D[Formulaire CR + analyse impact]
+    B -->|Majeur| E[Formulaire complet + Comite de decision]
+    B -->|Urgent| F[Hotfix immediat en production]
+    D --> G{Score impact}
+    G -->|4-5 Faible| H[Decision PO seul]
+    G -->|6-8 Modere| I[Decision PO + Architecte]
+    G -->|9-12 Eleve| E
+    H --> J{Accepte?}
+    I --> J
+    E --> K{Vote du comite}
+    K -->|Accepte| L[Decomposition en tickets]
+    K -->|Refuse| M[Archivage + justification]
+    K -->|Reporte| N[Ajout roadmap V2+]
+    J -->|Oui| L
+    J -->|Non| M
+    L --> O[Integration au Sprint Backlog]
+    O --> P[Sprint Planning]
+    F --> Q[Deploiement immediat]
+    Q --> R[Formalisation a posteriori]
+    C --> S[Merge apres code review]
+```
+
+### 1.7 Registre des changements
 
 Le registre est maintenu dans un fichier centralise (`docs/CHANGE_LOG.md`) et dans les issues GitHub.
 
@@ -308,7 +338,7 @@ IMPLEMENTATION : Sprint 3, ticket S3-EXTRA-01
 STATUT : Termine et deploye le 18/03/2026
 ```
 
-### 1.7 Communication du changement
+### 1.8 Communication du changement
 
 | Audience | Canal | Timing | Contenu |
 |----------|-------|--------|---------|
