@@ -1,0 +1,97 @@
+{
+  "slug": "deep",
+  "name": "DEEP",
+  "description": "Station sous-marine en peril -- Survivez, mais mefiez-vous du saboteur.",
+  "minPlayers": 2,
+  "maxPlayers": 6,
+  "duration": "15-25 min",
+  "difficulty": "difficile",
+  "maxRounds": 6,
+  "roles": [
+    {
+      "id": "commandant",
+      "name": "Commandant",
+      "team": "equipage",
+      "description": "Vous dirigez la station. Prenez les decisions critiques.",
+      "unique": true,
+      "required": true
+    },
+    {
+      "id": "ingenieur",
+      "name": "Ingenieur",
+      "team": "equipage",
+      "description": "Vous pouvez reparer les systemes endommages.",
+      "unique": true,
+      "required": true
+    },
+    {
+      "id": "medecin",
+      "name": "Medecin",
+      "team": "equipage",
+      "description": "Vous soignez les blesses et detectez les anomalies.",
+      "unique": true,
+      "required": false
+    },
+    {
+      "id": "saboteur",
+      "name": "Saboteur",
+      "team": "saboteur",
+      "description": "Detruisez la station sans vous faire demasquer.",
+      "unique": true,
+      "required": true
+    },
+    {
+      "id": "explorateur",
+      "name": "Explorateur",
+      "team": "equipage",
+      "description": "Vous explorez les zones dangereuses de la station.",
+      "unique": false,
+      "required": false
+    }
+  ],
+  "phases": ["NARRATION", "ACTION", "VOTE", "RESOLUTION"],
+  "gauges": [
+    {
+      "id": "sante",
+      "name": "Sante",
+      "min": 0,
+      "max": 100,
+      "initial": 100,
+      "appliesTo": "player"
+    },
+    {
+      "id": "suspicion",
+      "name": "Suspicion",
+      "min": 0,
+      "max": 100,
+      "initial": 20,
+      "appliesTo": "player"
+    },
+    {
+      "id": "pression",
+      "name": "Pression station",
+      "min": 0,
+      "max": 100,
+      "initial": 80,
+      "appliesTo": "global"
+    },
+    {
+      "id": "oxygene",
+      "name": "Oxygene",
+      "min": 0,
+      "max": 100,
+      "initial": 90,
+      "appliesTo": "global"
+    }
+  ],
+  "winConditions": {
+    "equipage": "Reparer la station (pression > 50 au dernier round) OU identifier le saboteur par vote",
+    "saboteur": "Detruire la station (pression <= 0) OU ne pas etre identifie jusqu'a la fin"
+  },
+  "aiPrompt": {
+    "systemPrompt": "Tu es le Maitre du Jeu d'une aventure sous-marine de survie. La station est en danger et un saboteur se cache parmi l'equipage. Narre les evenements avec tension et suspense. Decris l'environnement claustrophobique, les bruits de la station, la pression de l'eau. Reponds en francais.",
+    "introPrompt": "La station sous-marine DEEP-7 tremble. Une alarme retentit. Decris la scene d'ouverture, la panique initiale, et les premiers signes que quelque chose ne va pas. Presente l'environnement.",
+    "roundPrompt": "Round {round}/{maxRounds}. Etat de la station: pression {pression}%, oxygene {oxygene}%. Actions des joueurs: {actions}. Narre les consequences et fais avancer l'intrigue. Un joueur a peut-etre agi de maniere suspecte.",
+    "epiloguePrompt": "La partie est terminee. Resultat: {result}. Le saboteur etait: {saboteur}. Ecris un epilogue revelant toute la verite et le sort de chaque personnage."
+  }
+}
