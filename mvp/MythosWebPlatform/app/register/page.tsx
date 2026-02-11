@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { User, Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -56,10 +56,9 @@ export default function RegisterPage() {
   const { register, user } = useAuth()
   const router = useRouter()
 
-  if (user) {
-    router.push("/dashboard")
-    return null
-  }
+  useEffect(() => {
+    if (user) router.push("/dashboard")
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -219,7 +218,15 @@ export default function RegisterPage() {
           </div>
 
           {/* Google */}
-          <Button variant="outline" className="w-full border-border/60 text-foreground hover:bg-secondary bg-transparent" size="lg">
+          <Button
+            variant="outline"
+            className="w-full border-border/60 text-foreground hover:bg-secondary bg-transparent"
+            size="lg"
+            onClick={() => {
+              const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"
+              window.location.href = `${apiUrl}/auth/google`
+            }}
+          >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"

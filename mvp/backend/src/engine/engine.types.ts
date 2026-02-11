@@ -46,6 +46,7 @@ export type GamePhaseType =
   | 'WAITING'
   | 'NARRATION'
   | 'ACTION'
+  | 'DISCUSSION'
   | 'VOTE'
   | 'RESOLUTION';
 

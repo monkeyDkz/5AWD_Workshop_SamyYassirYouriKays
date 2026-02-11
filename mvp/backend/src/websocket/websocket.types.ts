@@ -15,6 +15,7 @@ export interface ClientToServerEvents {
   'game:action': (data: { gameId: string; action: string }) => void;
   'game:vote': (data: { gameId: string; targetId: string }) => void;
   'game:chat': (data: { gameId: string; message: string }) => void;
+  'game:whisper': (data: { gameId: string; recipientId: string; message: string }) => void;
   'lobby:join': (data: { code: string; token: string }) => void;
   'lobby:leave': (data: { code: string }) => void;
   'lobby:chat': (data: { code: string; message: string }) => void;
@@ -67,6 +68,16 @@ export interface ServerToClientEvents {
     loading: boolean;
   }) => void;
   'game:timer': (data: { seconds: number }) => void;
+  'game:timer:sync': (data: { seconds: number; phase: string }) => void;
+  'game:whisper:message': (data: {
+    userId: string;
+    username: string;
+    recipientId: string;
+    message: string;
+    timestamp: string;
+    isWhisper: boolean;
+  }) => void;
+  'game:narration:complete': (data: { text: string }) => void;
   'game:error': (data: { message: string }) => void;
   'lobby:update': (data: {
     players: any[];

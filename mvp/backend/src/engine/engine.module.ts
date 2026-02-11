@@ -5,6 +5,7 @@ import { ScenariosModule } from '../scenarios/scenarios.module';
 import { GamesModule } from '../games/games.module';
 import { CacheModule } from '../cache/cache.module';
 import { EngineService } from './engine.service';
+import { TimerService } from './timer.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { EngineService } from './engine.service';
     forwardRef(() => GamesModule),
     CacheModule,
   ],
-  providers: [EngineService],
-  exports: [EngineService],
+  providers: [EngineService, TimerService],
+  exports: [EngineService, TimerService],
 })
 export class EngineModule {}

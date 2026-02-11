@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils"
 const phases = [
   { id: "narration", label: "Narration" },
   { id: "action", label: "Action" },
+  { id: "discussion", label: "Discussion" },
   { id: "vote", label: "Vote" },
   { id: "resolution", label: "Resolution" },
 ]
 
-export type GamePhase = "narration" | "action" | "vote" | "resolution"
+export type GamePhase = "narration" | "action" | "discussion" | "vote" | "resolution"
 
 export function GamePhaseBar({ currentPhase }: { currentPhase: GamePhase }) {
   const currentIdx = phases.findIndex((p) => p.id === currentPhase)

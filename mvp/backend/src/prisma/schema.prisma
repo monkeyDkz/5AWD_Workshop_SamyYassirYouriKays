@@ -8,16 +8,27 @@ datasource db {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  email        String       @unique
-  username     String       @unique
-  passwordHash String
-  avatar       String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  gamePlayers  GamePlayer[]
-  messages     Message[]
-  stats        UserStats?
+  id            String       @id @default(uuid())
+  email         String       @unique
+  username      String       @unique
+  passwordHash  String
+  avatar        String?
+  oauthProvider String?
+  oauthId       String?
+  role          UserRole     @default(PLAYER)
+  bannedUntil   DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  gamePlayers   GamePlayer[]
+  messages      Message[]
+  stats         UserStats?
+
+  @@unique([oauthProvider, oauthId])
+}
+
+enum UserRole {
+  ADMIN
+  PLAYER
 }
 
 model UserStats {
@@ -64,6 +75,7 @@ enum GamePhase {
   WAITING
   NARRATION
   ACTION
+  DISCUSSION
   VOTE
   RESOLUTION
 }
@@ -98,14 +110,15 @@ model GameEvent {
 }
 
 model Message {
-  id        String      @id @default(uuid())
-  gameId    String
-  game      Game        @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  content   String
-  type      MessageType @default(CHAT)
-  createdAt DateTime    @default(now())
+  id          String      @id @default(uuid())
+  gameId      String
+  game        Game        @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  content     String
+  type        MessageType @default(CHAT)
+  recipientId String?
+  createdAt   DateTime    @default(now())
 }
 
 enum MessageType {
@@ -114,4 +127,5 @@ enum MessageType {
   AI_NARRATION
   ACTION
   VOTE
+  WHISPER
 }

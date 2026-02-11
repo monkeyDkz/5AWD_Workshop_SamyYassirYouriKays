@@ -255,6 +255,12 @@ export class EngineService {
       }
     }
 
+    // Check AI rate limit
+    const allowed = await this.cache.checkAiRateLimit(gameId);
+    if (!allowed) {
+      this.logger.warn(`AI rate limit reached for game ${gameId}`);
+    }
+
     // Call the AI to generate narration
     const narrative = await this.aiService.narrate(
       config.aiPrompt.systemPrompt,
@@ -284,6 +290,87 @@ export class EngineService {
       phase: 'NARRATION',
       round: state.currentRound,
     };
+  }
+
+  // ===========================================================================
+  // STREAMING NARRATION
+  // ===========================================================================
+
+  /**
+   * Start streaming narration for the current round.
+   * Yields text chunks as they arrive from the AI, then saves the full text.
+   */
+  async *startStreamingNarration(
+    gameId: string,
+  ): AsyncGenerator<{ chunk?: string; complete?: boolean; fullText?: string }> {
+    this.logger.log(`Starting streaming narration for game ${gameId}`);
+
+    const state = await this.loadState(gameId);
+    const config = this.scenariosService.getScenarioConfig(state.scenarioSlug);
+    const context = this.buildGameContext(state);
+
+    let userPrompt: string;
+
+    if (state.currentRound === 1) {
+      userPrompt = config.aiPrompt.introPrompt;
+    } else {
+      const prevRound = state.rounds[state.currentRound - 2];
+      const actionsText =
+        prevRound?.actions
+          ?.map((a) => {
+            const player = state.players.find((p) => p.userId === a.userId);
+            return `${player?.username || a.userId}: ${a.action}`;
+          })
+          .join('; ') || 'Aucune action';
+
+      userPrompt = config.aiPrompt.roundPrompt
+        .replace('{round}', String(state.currentRound))
+        .replace('{maxRounds}', String(state.maxRounds))
+        .replace('{actions}', actionsText);
+
+      for (const [gaugeId, gaugeValue] of Object.entries(state.globalGauges)) {
+        userPrompt = userPrompt.replace(`{${gaugeId}}`, String(gaugeValue));
+      }
+    }
+
+    await this.cache.checkAiRateLimit(gameId);
+
+    let fullText = '';
+    try {
+      for await (const chunk of this.aiService.streamNarrate(
+        config.aiPrompt.systemPrompt,
+        userPrompt,
+        context,
+      )) {
+        fullText += chunk;
+        yield { chunk };
+      }
+    } catch (error) {
+      this.logger.error(`Streaming narration error: ${error}`);
+      // Fallback to non-streaming
+      fullText = await this.aiService.narrate(
+        config.aiPrompt.systemPrompt,
+        userPrompt,
+        context,
+      );
+      yield { chunk: fullText };
+    }
+
+    // Save the complete narration
+    const currentRound = this.getCurrentRound(state);
+    currentRound.narration = fullText;
+    currentRound.phase = 'NARRATION';
+    state.currentPhase = 'NARRATION';
+    await this.saveState(state);
+
+    await this.gamesService.addGameEvent(gameId, {
+      round: state.currentRound,
+      phase: 'NARRATION',
+      type: 'NARRATION_GENERATED',
+      narrative: fullText,
+    });
+
+    yield { complete: true, fullText };
   }
 
   // ===========================================================================
@@ -336,6 +423,9 @@ export class EngineService {
     };
     currentRound.actions.push(roundAction);
 
+    // Cache actions for this round
+    await this.cache.setRoundActions(gameId, state.currentRound, currentRound.actions);
+
     // Save the action event
     await this.gamesService.addGameEvent(gameId, {
       round: state.currentRound,
@@ -354,18 +444,18 @@ export class EngineService {
 
     const allActed = remaining === 0;
 
-    // If all alive players have acted, auto-advance to VOTE phase
+    // If all alive players have acted, auto-advance to DISCUSSION phase
     if (allActed) {
-      currentRound.phase = 'VOTE';
-      state.currentPhase = 'VOTE';
+      currentRound.phase = 'DISCUSSION';
+      state.currentPhase = 'DISCUSSION';
 
       await this.prisma.game.update({
         where: { id: gameId },
-        data: { currentPhase: 'VOTE' },
+        data: { currentPhase: 'DISCUSSION' as any },
       });
 
       this.logger.log(
-        `All players acted in game ${gameId}, advancing to VOTE phase`,
+        `All players acted in game ${gameId}, advancing to DISCUSSION phase`,
       );
     }
 
@@ -433,6 +523,9 @@ export class EngineService {
       submittedAt: new Date().toISOString(),
     };
     currentRound.votes.push(roundVote);
+
+    // Cache votes for this round
+    await this.cache.setRoundVotes(gameId, state.currentRound, currentRound.votes);
 
     // Save the vote event
     await this.gamesService.addGameEvent(gameId, {
@@ -830,6 +923,11 @@ export class EngineService {
         break;
 
       case 'ACTION':
+        state.currentPhase = 'DISCUSSION';
+        this.getCurrentRound(state).phase = 'DISCUSSION';
+        break;
+
+      case 'DISCUSSION':
         state.currentPhase = 'VOTE';
         this.getCurrentRound(state).phase = 'VOTE';
         break;
@@ -1128,76 +1226,50 @@ export class EngineService {
   }
 
   /**
-   * DEEP scenario win conditions:
-   * - Saboteur wins: pression <= 0 (station destroyed)
-   * - Equipage wins: all rounds done + pression > 50
-   * - Equipage wins: saboteur identified (eliminated by vote)
+   * DEEP scenario win conditions (cooperative):
+   * - Defeat: any critical gauge (O2, Energie, Coque) reaches 0
+   * - Victory: last round completed with all gauges > 0
    */
   private checkDeepWinConditions(state: GameState): WinConditionResult {
-    const pression = state.globalGauges.pression ?? 0;
-    const saboteur = state.players.find((p) => p.team === 'saboteur');
-    const equipagePlayers = state.players.filter(
-      (p) => p.team === 'equipage',
-    );
+    const o2 = state.globalGauges.o2 ?? 0;
+    const energie = state.globalGauges.energie ?? 0;
+    const coque = state.globalGauges.coque ?? 0;
+    const profondeur = state.globalGauges.profondeur ?? 0;
+    const allPlayers = state.players.filter((p) => p.isAlive);
 
-    // Check if pression reached 0 -- saboteur wins
-    if (pression <= 0) {
-      const saboteurId = saboteur?.userId;
+    // Defeat: any critical gauge reaches 0
+    if (o2 <= 0) {
       return {
         isOver: true,
         result:
-          'La pression de la coque est tombee a zero! La station est detruite. Le saboteur a gagne.',
-        winners: saboteurId ? [saboteurId] : [],
-        winningTeam: 'saboteur',
+          "L'oxygene est epuise! L'equipage suffoque dans les profondeurs...",
+        winners: [],
       };
     }
-
-    // Check if saboteur has been eliminated (identified by vote)
-    if (saboteur && !saboteur.isAlive) {
+    if (energie <= 0) {
       return {
         isOver: true,
         result:
-          "Le saboteur a ete identifie et neutralise! L'equipage a gagne.",
-        winners: equipagePlayers
-          .filter((p) => p.isAlive)
-          .map((p) => p.userId),
-        winningTeam: 'equipage',
+          "Plus d'energie! Le sous-marin est plonge dans le noir absolu...",
+        winners: [],
       };
     }
-
-    // Check if all equipage members are dead
-    const aliveEquipage = equipagePlayers.filter((p) => p.isAlive);
-    if (aliveEquipage.length === 0) {
+    if (coque <= 0) {
       return {
         isOver: true,
         result:
-          "Tout l'equipage a ete elimine! Le saboteur remporte la victoire.",
-        winners: saboteur ? [saboteur.userId] : [],
-        winningTeam: 'saboteur',
+          'La coque a cede! La pression ecrase le sous-marin...',
+        winners: [],
       };
     }
 
-    // Check if last round + pression > 50 -- equipage wins
-    if (state.currentRound >= state.maxRounds && pression > 50) {
-      return {
-        isOver: true,
-        result:
-          "La station a survecu! L'equipage a maintenu la pression et remporte la victoire.",
-        winners: equipagePlayers
-          .filter((p) => p.isAlive)
-          .map((p) => p.userId),
-        winningTeam: 'equipage',
-      };
-    }
-
-    // Last round but pression <= 50 -- saboteur wins (station critically damaged)
+    // Victory: last round with all gauges > 0
     if (state.currentRound >= state.maxRounds) {
       return {
         isOver: true,
-        result:
-          'La station est gravement endommagee. Le saboteur a reussi sa mission.',
-        winners: saboteur ? [saboteur.userId] : [],
-        winningTeam: 'saboteur',
+        result: `Mission accomplie! Le sous-marin a atteint ${profondeur}m de profondeur. L'equipage survit!`,
+        winners: allPlayers.map((p) => p.userId),
+        winningTeam: 'equipage',
       };
     }
 

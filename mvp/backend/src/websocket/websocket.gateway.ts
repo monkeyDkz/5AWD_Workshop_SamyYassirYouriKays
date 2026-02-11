@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { EngineService } from '../engine/engine.service';
+import { TimerService } from '../engine/timer.service';
 import { GamesService } from '../games/games.service';
 import { AuthService } from '../auth/auth.service';
 import { CacheService } from '../cache/cache.service';
@@ -60,6 +61,7 @@ export class WebsocketGateway
 
   constructor(
     private readonly engineService: EngineService,
+    private readonly timerService: TimerService,
     private readonly gamesService: GamesService,
     private readonly authService: AuthService,
     private readonly cacheService: CacheService,
@@ -376,21 +378,58 @@ export class WebsocketGateway
 
       this.logger.log(`Game ${data.gameId} started by ${user.username}`);
 
-      // Start narration phase
-      const narration = await this.engineService.startNarration(data.gameId);
-
-      // Emit phase update BEFORE narration so the frontend
-      // resets state first, then receives the narration text
+      // Emit phase update BEFORE narration so the frontend resets state first
       this.server.to(gameRoom).emit('game:phase', {
         phase: 'NARRATION',
         round: 1,
       });
 
-      // Emit narration to game room
+      // Start streaming narration
       this.server.to(gameRoom).emit('game:narration', {
-        text: narration.text,
-        isStreaming: false,
+        text: '',
+        isStreaming: true,
       });
+
+      try {
+        for await (const result of this.engineService.startStreamingNarration(
+          data.gameId,
+        )) {
+          if (result.chunk) {
+            this.server
+              .to(gameRoom)
+              .emit('game:narration:chunk', { chunk: result.chunk });
+          }
+          if (result.complete) {
+            this.server
+              .to(gameRoom)
+              .emit('game:narration:complete', { text: result.fullText ?? '' });
+          }
+        }
+      } catch (streamError) {
+        // Fallback to non-streaming
+        this.logger.warn(`Streaming failed, falling back: ${streamError}`);
+        const narration = await this.engineService.startNarration(data.gameId);
+        this.server.to(gameRoom).emit('game:narration', {
+          text: narration.text,
+          isStreaming: false,
+        });
+      }
+
+      // Start server-side timer for NARRATION phase
+      const gameData = await this.gamesService.getGame(data.gameId);
+      const timeout = gameData?.turnTimeout ?? 60;
+      this.server.to(gameRoom).emit('game:timer:sync', {
+        seconds: timeout,
+        phase: 'NARRATION',
+      });
+      await this.timerService.startTimer(
+        data.gameId,
+        'NARRATION',
+        timeout,
+        async () => {
+          await this.autoAdvancePhase(data.gameId, gameRoom);
+        },
+      );
     } catch (error) {
       this.logger.error(`Error in game:start: ${error}`);
       client.emit('game:error', { message: 'Failed to start game' });
@@ -696,6 +735,14 @@ export class WebsocketGateway
         'CHAT',
       );
 
+      // Cache chat message
+      await this.cacheService.addChatMessage(data.gameId, {
+        userId: user.userId,
+        username: user.username,
+        message,
+        timestamp,
+      });
+
       // Broadcast to game room
       this.server.to(gameRoom).emit('game:chat:message', {
         userId: user.userId,
@@ -706,6 +753,75 @@ export class WebsocketGateway
     } catch (error) {
       this.logger.error(`Error in game:chat: ${error}`);
       client.emit('game:error', { message: 'Failed to send message' });
+    }
+  }
+
+  // ===========================================================================
+  // Whisper (private message)
+  // ===========================================================================
+
+  @SubscribeMessage('game:whisper')
+  async handleGameWhisper(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: { gameId: string; recipientId: string; message: string },
+  ): Promise<void> {
+    try {
+      if (!data?.gameId || !data?.recipientId || !data?.message) {
+        client.emit('game:error', {
+          message: 'Missing gameId, recipientId or message',
+        });
+        return;
+      }
+
+      const user = this.getUserFromSocket(client);
+      if (!user) {
+        client.emit('game:error', { message: 'Not authenticated' });
+        return;
+      }
+
+      const message = data.message.trim();
+      if (message.length === 0 || message.length > 500) {
+        client.emit('game:error', {
+          message: 'Message must be between 1 and 500 characters',
+        });
+        return;
+      }
+
+      // Save whisper to DB
+      await this.gamesService.saveWhisperMessage(
+        data.gameId,
+        user.userId,
+        data.recipientId,
+        message,
+      );
+
+      const timestamp = new Date().toISOString();
+      const whisperPayload = {
+        userId: user.userId,
+        username: user.username,
+        recipientId: data.recipientId,
+        message,
+        timestamp,
+        isWhisper: true,
+      };
+
+      // Send only to recipient's socket
+      const recipientSocketId = await this.cacheService.getPlayerConnection(
+        data.gameId,
+        data.recipientId,
+      );
+      if (recipientSocketId) {
+        this.server
+          .to(recipientSocketId)
+          .emit('game:whisper:message', whisperPayload);
+      }
+
+      // Send back to sender for confirmation
+      client.emit('game:whisper:message', whisperPayload);
+    } catch (error) {
+      this.logger.error(`Error in game:whisper: ${error}`);
+      client.emit('game:error', { message: 'Failed to send whisper' });
     }
   }
 
@@ -769,7 +885,7 @@ export class WebsocketGateway
 
   /**
    * Called when all alive players have submitted actions.
-   * Determines whether to go to VOTE phase or directly resolve.
+   * Advances to DISCUSSION phase (players chat before voting).
    */
   private async handleAllActionsSubmitted(
     gameId: string,
@@ -777,13 +893,28 @@ export class WebsocketGateway
   ): Promise<void> {
     try {
       const gameState = await this.cacheService.getGameState(gameId);
-      // The engine already advanced to VOTE phase in submitAction,
+      // Cancel ACTION timer
+      this.timerService.cancelTimer(gameId);
+
+      // The engine already advanced to DISCUSSION phase in submitAction,
       // so we just need to notify clients.
       this.server.to(gameRoom).emit('game:phase', {
-        phase: 'VOTE',
+        phase: 'DISCUSSION',
         round: gameState?.currentRound ?? 1,
       });
-      this.logger.log(`Game ${gameId} advanced to VOTE phase`);
+
+      // Start DISCUSSION timer
+      const gameData = await this.gamesService.getGame(gameId);
+      const timeout = gameData?.turnTimeout ?? 60;
+      this.server.to(gameRoom).emit('game:timer:sync', {
+        seconds: timeout,
+        phase: 'DISCUSSION',
+      });
+      await this.timerService.startTimer(gameId, 'DISCUSSION', timeout, async () => {
+        await this.autoAdvancePhase(gameId, gameRoom);
+      });
+
+      this.logger.log(`Game ${gameId} advanced to DISCUSSION phase`);
     } catch (error) {
       this.logger.error(
         `Error handling all actions submitted for game ${gameId}: ${error}`,
@@ -803,6 +934,8 @@ export class WebsocketGateway
     gameRoom: string,
   ): Promise<void> {
     try {
+      // Cancel VOTE timer since all players voted
+      this.timerService.cancelTimer(gameId);
       await this.resolveAndAdvance(gameId, gameRoom);
     } catch (error) {
       this.logger.error(
@@ -861,21 +994,47 @@ export class WebsocketGateway
       // Start next round after a 5-second delay
       setTimeout(async () => {
         try {
-          const narration =
-            await this.engineService.startNarration(gameId);
+          const gameState = await this.cacheService.getGameState(gameId);
+          const nextRound = gameState?.currentRound ?? 1;
 
           this.server.to(gameRoom).emit('game:phase', {
             phase: 'NARRATION',
-            round: narration.round,
+            round: nextRound,
           });
 
+          // Stream the narration
           this.server.to(gameRoom).emit('game:narration', {
-            text: narration.text,
-            isStreaming: false,
+            text: '',
+            isStreaming: true,
+          });
+
+          try {
+            for await (const result of this.engineService.startStreamingNarration(gameId)) {
+              if (result.chunk) {
+                this.server.to(gameRoom).emit('game:narration:chunk', { chunk: result.chunk });
+              }
+              if (result.complete) {
+                this.server.to(gameRoom).emit('game:narration:complete', { text: result.fullText ?? '' });
+              }
+            }
+          } catch (streamErr) {
+            const narration = await this.engineService.startNarration(gameId);
+            this.server.to(gameRoom).emit('game:narration', { text: narration.text, isStreaming: false });
+          }
+
+          // Start timer for NARRATION phase
+          const gameData = await this.gamesService.getGame(gameId);
+          const timeout = gameData?.turnTimeout ?? 60;
+          this.server.to(gameRoom).emit('game:timer:sync', {
+            seconds: timeout,
+            phase: 'NARRATION',
+          });
+          await this.timerService.startTimer(gameId, 'NARRATION', timeout, async () => {
+            await this.autoAdvancePhase(gameId, gameRoom);
           });
 
           this.logger.log(
-            `Game ${gameId} started narration for round ${narration.round}`,
+            `Game ${gameId} started streaming narration for round ${nextRound}`,
           );
         } catch (error) {
           this.logger.error(
@@ -971,6 +1130,46 @@ export class WebsocketGateway
   // ===========================================================================
   // Utility helpers
   // ===========================================================================
+
+  /**
+   * Auto-advance the game phase when the server timer expires.
+   * Called by the TimerService callback.
+   */
+  private async autoAdvancePhase(
+    gameId: string,
+    gameRoom: string,
+  ): Promise<void> {
+    try {
+      const state = await this.engineService.advancePhase(gameId);
+      this.server.to(gameRoom).emit('game:phase', {
+        phase: state.currentPhase,
+        round: state.currentRound,
+      });
+
+      // Start timer for the new phase
+      const gameData = await this.gamesService.getGame(gameId);
+      const timeout = gameData?.turnTimeout ?? 60;
+      this.server.to(gameRoom).emit('game:timer:sync', {
+        seconds: timeout,
+        phase: state.currentPhase,
+      });
+
+      // Don't auto-advance from RESOLUTION (it's handled by resolveAndAdvance)
+      if (state.currentPhase !== 'RESOLUTION') {
+        await this.timerService.startTimer(gameId, state.currentPhase, timeout, async () => {
+          await this.autoAdvancePhase(gameId, gameRoom);
+        });
+      }
+
+      this.logger.log(
+        `Timer expired: game ${gameId} auto-advanced to ${state.currentPhase}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error auto-advancing phase for game ${gameId}: ${error}`,
+      );
+    }
+  }
 
   /**
    * Emit an updated lobby state to all clients in a lobby room.

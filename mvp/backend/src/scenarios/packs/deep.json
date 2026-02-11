@@ -1,18 +1,18 @@
 {
   "slug": "deep",
   "name": "DEEP",
-  "description": "Station sous-marine en peril -- Survivez, mais mefiez-vous du saboteur.",
+  "description": "Equipage d'un sous-marin en detresse. Cooperez pour survivre aux crises et atteindre les profondeurs abyssales.",
   "minPlayers": 2,
   "maxPlayers": 6,
-  "duration": "15-25 min",
+  "duration": "20-30 min",
   "difficulty": "difficile",
-  "maxRounds": 6,
+  "maxRounds": 8,
   "roles": [
     {
       "id": "commandant",
       "name": "Commandant",
       "team": "equipage",
-      "description": "Vous dirigez la station. Prenez les decisions critiques.",
+      "description": "Vous dirigez le sous-marin. Vos decisions influencent la trajectoire et le moral.",
       "unique": true,
       "required": true
     },
@@ -20,7 +20,7 @@
       "id": "ingenieur",
       "name": "Ingenieur",
       "team": "equipage",
-      "description": "Vous pouvez reparer les systemes endommages.",
+      "description": "Vous reparee les systemes et gerez la distribution d'energie.",
       "unique": true,
       "required": true
     },
@@ -28,77 +28,70 @@
       "id": "medecin",
       "name": "Medecin",
       "team": "equipage",
-      "description": "Vous soignez les blesses et detectez les anomalies.",
+      "description": "Vous soignez l'equipage et surveillez les reserves d'oxygene.",
       "unique": true,
       "required": false
     },
     {
-      "id": "saboteur",
-      "name": "Saboteur",
-      "team": "saboteur",
-      "description": "Detruisez la station sans vous faire demasquer.",
-      "unique": true,
-      "required": true
-    },
-    {
-      "id": "explorateur",
-      "name": "Explorateur",
+      "id": "plongeur",
+      "name": "Plongeur",
       "team": "equipage",
-      "description": "Vous explorez les zones dangereuses de la station.",
+      "description": "Vous effectuez les sorties sous-marines pour reparer la coque et explorer.",
       "unique": false,
       "required": false
     }
   ],
-  "phases": ["NARRATION", "ACTION", "VOTE", "RESOLUTION"],
+  "phases": ["NARRATION", "ACTION", "DISCUSSION", "VOTE", "RESOLUTION"],
   "actions": [
-    "Reparer les systemes",
-    "Inspecter la coque",
-    "Verifier les reserves d'oxygene",
-    "Surveiller un autre joueur",
-    "Explorer une zone dangereuse"
+    "Reparer la coque",
+    "Redistribuer l'energie",
+    "Recharger l'oxygene",
+    "Plonger plus profond",
+    "Stabiliser le sous-marin",
+    "Explorer l'environnement"
   ],
   "gauges": [
     {
-      "id": "sante",
-      "name": "Sante",
+      "id": "o2",
+      "name": "Oxygene",
       "min": 0,
       "max": 100,
-      "initial": 100,
-      "appliesTo": "player"
+      "initial": 90,
+      "appliesTo": "global"
     },
     {
-      "id": "suspicion",
-      "name": "Suspicion",
-      "min": 0,
-      "max": 100,
-      "initial": 20,
-      "appliesTo": "player"
-    },
-    {
-      "id": "pression",
-      "name": "Pression station",
+      "id": "energie",
+      "name": "Energie",
       "min": 0,
       "max": 100,
       "initial": 80,
       "appliesTo": "global"
     },
     {
-      "id": "oxygene",
-      "name": "Oxygene",
+      "id": "coque",
+      "name": "Coque",
       "min": 0,
       "max": 100,
-      "initial": 90,
+      "initial": 85,
+      "appliesTo": "global"
+    },
+    {
+      "id": "profondeur",
+      "name": "Profondeur",
+      "min": 0,
+      "max": 8000,
+      "initial": 500,
       "appliesTo": "global"
     }
   ],
   "winConditions": {
-    "equipage": "Reparer la station (pression > 50 au dernier round) OU identifier le saboteur par vote",
-    "saboteur": "Detruire la station (pression <= 0) OU ne pas etre identifie jusqu'a la fin"
+    "equipage": "Atteindre la profondeur maximale (8000m) avec toutes les jauges > 0 au dernier round",
+    "defaite": "Une jauge critique (O2, Energie ou Coque) tombe a 0"
   },
   "aiPrompt": {
-    "systemPrompt": "Tu es le Maitre du Jeu d'une aventure sous-marine de survie. La station est en danger et un saboteur se cache parmi l'equipage. Narre les evenements avec tension et suspense. Decris l'environnement claustrophobique, les bruits de la station, la pression de l'eau. Reponds en francais.",
-    "introPrompt": "La station sous-marine DEEP-7 tremble. Une alarme retentit. Decris la scene d'ouverture, la panique initiale, et les premiers signes que quelque chose ne va pas. Presente l'environnement.",
-    "roundPrompt": "Round {round}/{maxRounds}. Etat de la station: pression {pression}%, oxygene {oxygene}%. Actions des joueurs: {actions}. Narre les consequences et fais avancer l'intrigue. Un joueur a peut-etre agi de maniere suspecte.",
-    "epiloguePrompt": "La partie est terminee. Resultat: {result}. Le saboteur etait: {saboteur}. Ecris un epilogue revelant toute la verite et le sort de chaque personnage."
+    "systemPrompt": "Tu es l'ordinateur de bord du sous-marin DEEP-7. Tu narres les evenements avec tension et realisme. L'equipage coopere pour atteindre les profondeurs abyssales. A chaque round, la profondeur augmente et de nouvelles crises surviennent. Decris l'environnement claustrophobique, les creatures des profondeurs, et les defaillances du sous-marin. Reponds en francais.",
+    "introPrompt": "Le sous-marin DEEP-7 entame sa descente vers les abysses. L'equipage est pret. Decris la scene d'ouverture: le depart du port sous-marin, les premieres lueurs qui disparaissent, et les premiers signes que la mission sera dangereuse. Profondeur actuelle: 500m.",
+    "roundPrompt": "Round {round}/{maxRounds}. Profondeur: {profondeur}m. O2: {o2}%, Energie: {energie}%, Coque: {coque}%. Actions des joueurs: {actions}. Narre les consequences des actions. La profondeur augmente, de nouvelles menaces apparaissent. L'equipage doit cooperer pour survivre.",
+    "epiloguePrompt": "La mission est terminee. Resultat: {result}. Ecris un epilogue decrivant le sort de l'equipage et du sous-marin DEEP-7."
   }
 }

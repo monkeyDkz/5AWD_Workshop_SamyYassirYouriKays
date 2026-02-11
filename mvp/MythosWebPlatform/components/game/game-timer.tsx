@@ -2,11 +2,29 @@
 
 import { useEffect, useState } from "react"
 
-export function GameTimer({ seconds: initial }: { seconds: number }) {
+export function GameTimer({
+  seconds: initial,
+  serverSeconds,
+}: {
+  seconds: number
+  serverSeconds?: number
+}) {
   const [seconds, setSeconds] = useState(initial)
+  const [total, setTotal] = useState(initial)
+
+  // Sync from server
+  useEffect(() => {
+    if (serverSeconds !== undefined) {
+      setSeconds(serverSeconds)
+      if (serverSeconds > total) {
+        setTotal(serverSeconds)
+      }
+    }
+  }, [serverSeconds, total])
 
   useEffect(() => {
     setSeconds(initial)
+    setTotal(initial)
   }, [initial])
 
   useEffect(() => {
@@ -15,7 +33,7 @@ export function GameTimer({ seconds: initial }: { seconds: number }) {
     return () => clearInterval(id)
   }, [seconds])
 
-  const pct = (seconds / initial) * 100
+  const pct = total > 0 ? (seconds / total) * 100 : 0
   const radius = 28
   const circumference = 2 * Math.PI * radius
   const strokeOffset = circumference - (pct / 100) * circumference

@@ -456,6 +456,23 @@ export class GamesService {
     });
   }
 
+  async saveWhisperMessage(
+    gameId: string,
+    userId: string,
+    recipientId: string,
+    content: string,
+  ) {
+    return this.prisma.message.create({
+      data: {
+        gameId,
+        userId,
+        content,
+        type: 'WHISPER',
+        recipientId,
+      },
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Get the player list for a game (for lobby/game updates)
   // ---------------------------------------------------------------------------

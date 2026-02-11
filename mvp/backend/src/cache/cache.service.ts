@@ -215,6 +215,111 @@ export class CacheService implements OnModuleDestroy {
   }
 
   // ---------------------------------------------------------------------------
+  // Timer state (server-side timers)
+  // ---------------------------------------------------------------------------
+
+  async setTimerState(
+    gameId: string,
+    timer: { phase: string; expiresAt: number; duration: number },
+  ): Promise<void> {
+    await this.set(`game:${gameId}:timer`, timer, 600); // 10 min TTL
+  }
+
+  async getTimerState(
+    gameId: string,
+  ): Promise<{ phase: string; expiresAt: number; duration: number } | null> {
+    return this.get(`game:${gameId}:timer`);
+  }
+
+  async deleteTimerState(gameId: string): Promise<void> {
+    await this.del(`game:${gameId}:timer`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Round actions cache
+  // ---------------------------------------------------------------------------
+
+  async setRoundActions(
+    gameId: string,
+    round: number,
+    actions: any[],
+  ): Promise<void> {
+    await this.set(`game:${gameId}:round:${round}:actions`, actions, 3600);
+  }
+
+  async getRoundActions(
+    gameId: string,
+    round: number,
+  ): Promise<any[] | null> {
+    return this.get(`game:${gameId}:round:${round}:actions`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Round votes cache
+  // ---------------------------------------------------------------------------
+
+  async setRoundVotes(
+    gameId: string,
+    round: number,
+    votes: any[],
+  ): Promise<void> {
+    await this.set(`game:${gameId}:round:${round}:votes`, votes, 3600);
+  }
+
+  async getRoundVotes(
+    gameId: string,
+    round: number,
+  ): Promise<any[] | null> {
+    return this.get(`game:${gameId}:round:${round}:votes`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Chat messages cache
+  // ---------------------------------------------------------------------------
+
+  async addChatMessage(gameId: string, message: any): Promise<void> {
+    const messages = (await this.getChatMessages(gameId)) || [];
+    messages.push(message);
+    await this.set(`game:${gameId}:chat`, messages, 86400); // 24h TTL
+  }
+
+  async getChatMessages(gameId: string): Promise<any[] | null> {
+    return this.get(`game:${gameId}:chat`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // JWT session tracking
+  // ---------------------------------------------------------------------------
+
+  async setUserSession(
+    userId: string,
+    tokenId: string,
+    ttlSeconds: number,
+  ): Promise<void> {
+    await this.set(`session:${userId}:jwt`, tokenId, ttlSeconds);
+  }
+
+  async getUserSession(userId: string): Promise<string | null> {
+    return this.get(`session:${userId}:jwt`);
+  }
+
+  async deleteUserSession(userId: string): Promise<void> {
+    await this.del(`session:${userId}:jwt`);
+  }
+
+  // ---------------------------------------------------------------------------
+  // AI rate limiting
+  // ---------------------------------------------------------------------------
+
+  async checkAiRateLimit(gameId: string): Promise<boolean> {
+    const key = `ratelimit:ai:${gameId}`;
+    const current = await this.get<number>(key);
+    if (current !== null && current >= 10) return false; // max 10 AI calls per 60s per game
+    await this.set(key, (current || 0) + 1, 60); // 60s TTL
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
   // In-memory fallback helpers
   // ---------------------------------------------------------------------------
 

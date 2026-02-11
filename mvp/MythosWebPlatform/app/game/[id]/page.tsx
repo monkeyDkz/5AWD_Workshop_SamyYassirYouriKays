@@ -17,6 +17,7 @@ function phaseToGamePhase(phase: string): GamePhase {
   const lower = phase.toLowerCase()
   if (lower.includes("narration") || lower.includes("briefing")) return "narration"
   if (lower.includes("action") || lower.includes("exploration") || lower.includes("reparation")) return "action"
+  if (lower.includes("discussion")) return "discussion"
   if (lower.includes("vote") || lower.includes("deliberation") || lower.includes("suspicion")) return "vote"
   return "resolution"
 }
@@ -49,6 +50,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
   // Narration
   const [narrationText, setNarrationText] = useState<string>("")
+  const [isStreaming, setIsStreaming] = useState(false)
 
   // Actions
   const [customAction, setCustomAction] = useState("")
@@ -77,6 +79,8 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
   const [chatMessage, setChatMessage] = useState("")
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const [whisperTarget, setWhisperTarget] = useState<{ id: string; username: string } | null>(null)
+  const [serverTimerSeconds, setServerTimerSeconds] = useState<number | undefined>(undefined)
 
   // Waiting message
   const [waitingMessage, setWaitingMessage] = useState("")
@@ -151,8 +155,26 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
 
     // Narration from AI
     socket.on("game:narration", (data: { text: string; isStreaming: boolean }) => {
-      setNarrationText(data.text)
+      if (data.isStreaming) {
+        setNarrationText("")
+        setIsStreaming(true)
+      } else {
+        setNarrationText(data.text)
+        setIsStreaming(false)
+      }
       setWaitingMessage("")
+    })
+
+    // Streaming narration chunks
+    socket.on("game:narration:chunk", (data: { chunk: string }) => {
+      setIsStreaming(true)
+      setNarrationText((prev) => prev + data.chunk)
+    })
+
+    // Streaming narration complete
+    socket.on("game:narration:complete", (data: { text: string }) => {
+      setIsStreaming(false)
+      setNarrationText(data.text)
     })
 
     // Phase changes
@@ -242,6 +264,26 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       setChatMessages((prev) => [...prev, msg])
     })
 
+    // Timer sync from server
+    socket.on("game:timer:sync", (data: { seconds: number; phase: string }) => {
+      setServerTimerSeconds(data.seconds)
+    })
+
+    // Whisper (private message)
+    socket.on("game:whisper:message", (data: any) => {
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          userId: data.userId,
+          username: data.username,
+          message: data.message,
+          timestamp: data.timestamp,
+          isWhisper: true,
+          recipientId: data.recipientId,
+        } as any,
+      ])
+    })
+
     // Errors
     socket.on("game:error", (data: { message: string }) => {
       setError(data.message)
@@ -254,6 +296,8 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         s.emit("game:leave", { gameId: id })
         s.off("game:state")
         s.off("game:narration")
+        s.off("game:narration:chunk")
+        s.off("game:narration:complete")
         s.off("game:phase")
         s.off("game:action:received")
         s.off("game:action:suggestions")
@@ -261,6 +305,8 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         s.off("game:resolution")
         s.off("game:over")
         s.off("game:chat:message")
+        s.off("game:whisper:message")
+        s.off("game:timer:sync")
         s.off("game:error")
         s.off("connect")
       }
@@ -308,9 +354,17 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     if (!trimmed) return
     const socket = getSocket()
     if (!socket) return
-    socket.emit("game:chat", { gameId: id, message: trimmed })
+    if (whisperTarget) {
+      socket.emit("game:whisper", {
+        gameId: id,
+        recipientId: whisperTarget.id,
+        message: trimmed,
+      })
+    } else {
+      socket.emit("game:chat", { gameId: id, message: trimmed })
+    }
     setChatMessage("")
-  }, [chatMessage, id])
+  }, [chatMessage, id, whisperTarget])
 
   const handleLeaveGame = useCallback(() => {
     const socket = getSocket()
@@ -364,7 +418,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         </div>
         {!gameOver && <GamePhaseBar currentPhase={displayPhase} />}
         <div className="flex items-center gap-3">
-          {!gameOver && <GameTimer seconds={game.turnTimeout ?? 60} />}
+          {!gameOver && <GameTimer seconds={game.turnTimeout ?? 60} serverSeconds={serverTimerSeconds} />}
           <Button
             variant="ghost"
             size="sm"
@@ -479,13 +533,16 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                 <div className="flex flex-col gap-6">
                   {narrationText ? (
                     <div className="prose prose-invert max-w-none">
-                      {narrationText.split("\n\n").map((p, i) => (
+                      {narrationText.split("\n\n").map((p, i, arr) => (
                         <p
                           key={i}
                           className="text-foreground/90 leading-relaxed font-serif text-base"
                           style={{ animationDelay: `${i * 0.3}s` }}
                         >
                           {p}
+                          {isStreaming && i === arr.length - 1 && (
+                            <span className="inline-block w-1.5 h-4 ml-1 bg-primary/80 animate-pulse align-middle" />
+                          )}
                         </p>
                       ))}
                     </div>
@@ -497,7 +554,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                   )}
 
                   {/* Host advance button */}
-                  {isHost && narrationText && (
+                  {isHost && narrationText && !isStreaming && (
                     <Button
                       className="self-center glow-violet-sm"
                       onClick={handleAdvancePhase}
@@ -606,6 +663,23 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                 </div>
               )}
 
+              {/* DISCUSSION phase */}
+              {!gameOver && displayPhase === "discussion" && (
+                <div className="flex flex-col gap-6">
+                  <div className="rounded-xl border border-blue-500/30 bg-blue-500/5 p-4 text-center">
+                    <p className="font-display text-lg font-bold text-blue-400">Phase de Discussion</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Discutez avec les autres joueurs avant le vote
+                    </p>
+                  </div>
+                  {isHost && (
+                    <Button className="self-center glow-violet-sm" onClick={handleAdvancePhase}>
+                      Passer au vote
+                    </Button>
+                  )}
+                </div>
+              )}
+
               {/* VOTE phase */}
               {!gameOver && displayPhase === "vote" && (
                 <div className="flex flex-col gap-6">
@@ -706,11 +780,22 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
             <div className="flex flex-col gap-3">
               {players.map((player) => (
                 <div key={player.id} className="flex flex-col gap-2">
-                  <PlayerCard
-                    name={player.user.username}
-                    role={player.role ?? undefined}
-                    status={player.isAlive ? "online" : "eliminated"}
-                  />
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      if (player.userId !== user?.id) {
+                        setWhisperTarget({ id: player.userId, username: player.user.username })
+                        setChatOpen(true)
+                      }
+                    }}
+                    title={player.userId !== user?.id ? `Whisper a ${player.user.username}` : undefined}
+                  >
+                    <PlayerCard
+                      name={player.user.username}
+                      role={player.role ?? undefined}
+                      status={player.isAlive ? "online" : "eliminated"}
+                    />
+                  </div>
                   {player.isAlive && (
                     <div className="flex flex-col gap-1 px-1">
                       <div className="flex items-center justify-between text-xs">
@@ -753,9 +838,11 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                     Aucun message pour le moment.
                   </p>
                 ) : (
-                  chatMessages.map((msg, i) => (
-                    <div key={i} className="flex gap-2">
-                      <span className="font-semibold text-primary text-xs">{msg.username}:</span>
+                  chatMessages.map((msg: any, i) => (
+                    <div key={i} className={`flex gap-2 ${msg.isWhisper ? "italic opacity-80" : ""}`}>
+                      <span className={`font-semibold text-xs ${msg.isWhisper ? "text-purple-400" : "text-primary"}`}>
+                        {msg.isWhisper ? `[Whisper] ${msg.username}` : `${msg.username}`}:
+                      </span>
                       <span className="text-foreground text-xs">{msg.message}</span>
                     </div>
                   ))
@@ -763,15 +850,29 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                 <div ref={chatEndRef} />
               </div>
             </div>
+            {whisperTarget && (
+              <div className="flex items-center gap-2 border-t border-border px-3 py-1 bg-purple-500/10">
+                <span className="text-[10px] text-purple-400">
+                  Whisper a {whisperTarget.username}
+                </span>
+                <button
+                  onClick={() => setWhisperTarget(null)}
+                  className="text-[10px] text-muted-foreground hover:text-foreground"
+                >
+                  x
+                </button>
+              </div>
+            )}
             <div className="flex gap-2 border-t border-border p-3">
               <Input
-                placeholder="Message..."
+                placeholder={whisperTarget ? `Whisper a ${whisperTarget.username}...` : "Message..."}
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleSendChat()
+                  if (e.key === "Escape") setWhisperTarget(null)
                 }}
-                className="bg-secondary/50 border-border/50 h-8 text-sm"
+                className={`bg-secondary/50 border-border/50 h-8 text-sm ${whisperTarget ? "border-purple-500/30" : ""}`}
               />
               <Button size="sm" className="h-8" onClick={handleSendChat}>
                 <Send className="h-3.5 w-3.5" />

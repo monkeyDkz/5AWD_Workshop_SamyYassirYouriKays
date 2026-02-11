@@ -15,7 +15,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-const PUBLIC_PATHS = ["/", "/login", "/register", "/scenarios"]
+const PUBLIC_PATHS = ["/", "/login", "/register", "/scenarios", "/auth/callback"]
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
