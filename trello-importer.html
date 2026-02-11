@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYTHOS — Import Trello (47 tickets)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #f0f0f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .container { max-width: 660px; width: 100%; padding: 40px; }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: #a0a3b1; margin-bottom: 32px; font-size: 0.9rem; }
+    .step { background: #1a1d27; border: 1px solid #2d3140; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .step-num { display: inline-block; width: 28px; height: 28px; background: #6c5ce7; color: white; border-radius: 50%; text-align: center; line-height: 28px; font-weight: 700; font-size: 0.85rem; margin-right: 10px; }
+    .step-title { font-weight: 700; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; }
+    .step p { color: #a0a3b1; font-size: 0.85rem; line-height: 1.6; margin-bottom: 12px; }
+    a { color: #a29bfe; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    label { display: block; font-size: 0.8rem; color: #a0a3b1; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    input { width: 100%; padding: 10px 14px; background: #0f1117; border: 1px solid #2d3140; border-radius: 8px; color: #f0f0f5; font-size: 0.9rem; margin-bottom: 12px; }
+    input:focus { outline: none; border-color: #6c5ce7; }
+    button { width: 100%; padding: 14px; background: #6c5ce7; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #5a4bd1; }
+    button:disabled { background: #2d3140; cursor: not-allowed; }
+    .log { background: #0f1117; border: 1px solid #2d3140; border-radius: 8px; padding: 16px; margin-top: 16px; max-height: 500px; overflow-y: auto; font-family: monospace; font-size: 0.75rem; line-height: 1.8; display: none; }
+    .log-ok { color: #55efc4; }
+    .log-err { color: #ff6b6b; }
+    .log-info { color: #74b9ff; }
+    .log-warn { color: #fdcb6e; }
+    .progress { height: 4px; background: #2d3140; border-radius: 2px; margin-top: 12px; overflow: hidden; display: none; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #6c5ce7, #55efc4); border-radius: 2px; transition: width 0.3s; width: 0%; }
+    .note { background: rgba(253,203,110,0.1); border: 1px solid rgba(253,203,110,0.3); border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; font-size: 0.8rem; color: #fdcb6e; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat { background: #0f1117; border: 1px solid #2d3140; border-radius: 8px; padding: 12px; text-align: center; }
+    .stat-num { font-size: 1.4rem; font-weight: 800; color: #a29bfe; }
+    .stat-label { font-size: 0.7rem; color: #a0a3b1; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>MYTHOS — Import Trello</h1>
+    <p class="subtitle">Importe automatiquement le backlog complet (47 tickets + Icebox) dans ton board Trello via l'API.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-num">54</div><div class="stat-label">Cartes</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Listes</div></div>
+      <div class="stat"><div class="stat-num">196</div><div class="stat-label">Story Points</div></div>
+    </div>
+
+    <div class="note">
+      Ce script utilise l'API Trello pour creer les listes et cartes. Tes cles restent en local, rien n'est envoye ailleurs que chez Trello.
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">1</span> Obtenir ta cle API</div>
+      <p>Va sur <a href="https://trello.com/power-ups/admin" target="_blank">trello.com/power-ups/admin</a>, cree un Power-Up (nom: "Import MYTHOS"), puis copie ta <strong>API Key</strong>.</p>
+      <label>API Key</label>
+      <input type="text" id="apiKey" placeholder="ex: a1b2c3d4e5f6..." />
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">2</span> Generer un Token</div>
+      <p>Clique sur le bouton ci-dessous apres avoir entre ta cle API. Ca ouvrira Trello pour autoriser l'acces.</p>
+      <button onclick="getToken()" style="background: #2d3140; margin-bottom: 12px;">Obtenir le Token</button>
+      <label>Token</label>
+      <input type="text" id="token" placeholder="Colle ton token ici apres autorisation" />
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">3</span> ID du Board</div>
+      <p>L'ID se trouve dans l'URL de ton board Trello :<br><code>trello.com/b/<strong>YAgZ49uf</strong>/...</code> → l'ID est <strong>YAgZ49uf</strong></p>
+      <label>Board ID</label>
+      <input type="text" id="boardId" placeholder="ex: YAgZ49uf" value="YAgZ49uf" />
+    </div>
+
+    <div class="step">
+      <div class="step-title"><span class="step-num">4</span> Importer</div>
+      <p>Clique pour <strong>effacer le contenu existant</strong> du board puis creer <strong>6 listes Kanban</strong> et <strong>54 cartes</strong> (47 tickets + 7 icebox) avec labels sprint (S0-SB) pour filtrer.</p>
+      <button id="importBtn" onclick="startImport()">Lancer l'import</button>
+      <div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script>
+    function getToken() {
+      const key = document.getElementById('apiKey').value.trim();
+      if (!key) { alert('Entre ta cle API d\'abord !'); return; }
+      window.open(`https://trello.com/1/authorize?expiration=1day&name=MYTHOS+Import&scope=read,write&response_type=token&key=${key}`, '_blank');
+    }
+
+    const logEl = document.getElementById('log');
+    const progressEl = document.getElementById('progress');
+    const progressBar = document.getElementById('progressBar');
+
+    function log(msg, type = 'info') {
+      logEl.style.display = 'block';
+      logEl.innerHTML += `<div class="log-${type}">${msg}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setProgress(pct) {
+      progressEl.style.display = 'block';
+      progressBar.style.width = pct + '%';
+    }
+
+    const delay = ms => new Promise(r => setTimeout(r, ms));
+
+    async function api(method, path, body = null) {
+      const key = document.getElementById('apiKey').value.trim();
+      const token = document.getElementById('token').value.trim();
+      const sep = path.includes('?') ? '&' : '?';
+      const url = `https://api.trello.com/1${path}${sep}key=${key}&token=${token}`;
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(url, opts);
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`API ${res.status}: ${text}`);
+      }
+      return res.json();
+    }
+
+    async function startImport() {
+      const btn = document.getElementById('importBtn');
+      btn.disabled = true;
+      btn.textContent = 'Import en cours...';
+      logEl.innerHTML = '';
+
+      const boardId = document.getElementById('boardId').value.trim();
+
+      try {
+        // ============================================================
+        // STEP 0: Clean existing board content
+        // ============================================================
+        log('🧹 Nettoyage du board existant...', 'warn');
+
+        // Delete all existing lists (and their cards)
+        const existingLists = await api('GET', `/boards/${boardId}/lists`);
+        for (const list of existingLists) {
+          // Archive all cards in the list first
+          await api('POST', `/lists/${list.id}/archiveAllCards`);
+          // Then close/archive the list
+          await api('PUT', `/lists/${list.id}/closed`, { value: true });
+          log(`  ✗ Liste "${list.name}" supprimee (${list.cards?.length || '?'} cartes)`, 'info');
+          await delay(100);
+        }
+
+        // Delete all existing labels
+        const existingLabels = await api('GET', `/boards/${boardId}/labels`);
+        for (const label of existingLabels) {
+          if (label.name) {
+            await api('DELETE', `/labels/${label.id}`);
+            log(`  ✗ Label "${label.name}" supprime`, 'info');
+            await delay(80);
+          }
+        }
+
+        log(`  ✓ Board nettoye (${existingLists.length} listes, ${existingLabels.filter(l => l.name).length} labels supprimes)`, 'ok');
+        setProgress(5);
+
+        // ============================================================
+        // STEP 1: Create labels
+        // ============================================================
+        log('Creation des labels...', 'info');
+        const labelColors = [
+          // Labels domaine
+          { name: 'Frontend', color: 'sky' },
+          { name: 'Backend', color: 'green' },
+          { name: 'IA', color: 'purple' },
+          { name: 'DevOps', color: 'pink' },
+          { name: 'Design', color: 'yellow' },
+          { name: 'Game', color: 'red' },
+          { name: 'Doc', color: 'black' },
+          { name: 'Tests', color: 'lime' },
+          // Labels sprint (pour filtrage)
+          { name: 'Sprint 0', color: 'orange' },
+          { name: 'Sprint 1', color: 'orange' },
+          { name: 'Sprint 2', color: 'orange' },
+          { name: 'Sprint 3', color: 'orange' },
+          { name: 'Sprint 4', color: 'orange' },
+          { name: 'Sprint 5', color: 'orange' },
+          { name: 'Buffer', color: 'orange' }
+        ];
+
+        const labels = {};
+        for (const l of labelColors) {
+          const label = await api('POST', `/boards/${boardId}/labels`, { name: l.name, color: l.color });
+          labels[l.name] = label.id;
+          log(`  ✓ Label "${l.name}" cree`, 'ok');
+          await delay(100);
+        }
+        setProgress(5);
+
+        // ============================================================
+        // STEP 2: Create 6 Kanban lists
+        // ============================================================
+        log('Creation des 6 listes Kanban...', 'info');
+        const listsData = [
+          '🧊 Icebox (Post-MVP)',
+          '✅ Termine',
+          '👀 En Review',
+          '🔨 En Cours',
+          '📌 A Faire',
+          '📋 Backlog'
+        ];
+
+        const lists = {};
+        for (const name of listsData) {
+          const list = await api('POST', `/boards/${boardId}/lists`, { name, pos: 'top' });
+          lists[name] = list.id;
+          log(`  ✓ Liste "${name}" creee`, 'ok');
+          await delay(100);
+        }
+        setProgress(15);
+
+        // ============================================================
+        // STEP 3: Create all 54 cards
+        // ============================================================
+        log('Creation des 54 cartes...', 'info');
+
+        // Kanban list shortcuts
+        const BACKLOG = '📋 Backlog';
+        const TODO = '📌 A Faire';
+        const DOING = '🔨 En Cours';
+        const REVIEW = '👀 En Review';
+        const DONE = '✅ Termine';
+        const ICE = '🧊 Icebox (Post-MVP)';
+
+        const cardsData = [
+
+          // =====================================================
+          // SPRINT 0 – Cadrage & Setup (7 tickets, 23 SP)
+          // =====================================================
+          {
+            list: TODO,
+            name: '[S0-01][8pts] Rediger le cahier des charges v1',
+            desc: `**ID:** S0-01 | **Epic:** Documentation | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 8
+
+**Description:**
+Rediger la premiere version complete du cahier des charges MYTHOS couvrant toutes les sections requises par le RNCP Bloc 1 (faisabilite, veille, architecture, specifications, risques, planning, KPI, reglementation).
+
+**Criteres d'acceptation:**
+- [ ] Toutes les 11 sections du CDC sont redigees
+- [ ] Chaque competence C1.1 a C1.7 est couverte
+- [ ] Le document est relu par tous les membres
+- [ ] Version PDF exportee et archivee
+
+**Dependances:** Aucune`,
+            labels: ['Doc', 'Sprint 0'],
+            checklist: ['Rediger section faisabilite', 'Rediger section veille techno', 'Rediger section architecture', 'Rediger section specifications', 'Rediger section risques', 'Rediger section planning + KPI', 'Relecture equipe + export PDF']
+          },
+          {
+            list: TODO,
+            name: '[S0-02][2pts] Initialiser le repository GitHub',
+            desc: `**ID:** S0-02 | **Epic:** Infrastructure | **Priorite:** MUST
+**Assigne:** Samy + Yassir | **Story Points:** 2
+
+**Description:**
+Creer le repository GitHub avec structure monorepo. Configurer branches (main, develop, feature/*), regles de protection, et template de PR.
+
+**Criteres d'acceptation:**
+- [ ] Repository cree et accessible par toute l'equipe
+- [ ] Branche main protegee (review obligatoire)
+- [ ] Branche develop creee
+- [ ] .gitignore configure (Node.js, Next.js, .env)
+- [ ] README.md avec instructions de setup
+- [ ] Template de PR et d'issues crees
+
+**Dependances:** Aucune`,
+            labels: ['DevOps', 'Sprint 0'],
+            checklist: ['Creer repo GitHub', 'Configurer branch protection', 'Creer branche develop', 'Configurer .gitignore', 'Ecrire README.md', 'Creer templates PR + issues']
+          },
+          {
+            list: TODO,
+            name: '[S0-03][2pts] Configurer le projet Next.js (Frontend)',
+            desc: `**ID:** S0-03 | **Epic:** Infrastructure | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 2
+
+**Description:**
+Initialiser le projet Next.js 14+ avec App Router, TailwindCSS, TypeScript, Zustand. Configurer ESLint, Prettier, et la structure de dossiers.
+
+**Criteres d'acceptation:**
+- [ ] create-next-app execute avec TypeScript + App Router
+- [ ] TailwindCSS installe et configure
+- [ ] Zustand installe
+- [ ] ESLint + Prettier configures
+- [ ] Structure : app/, components/, lib/, stores/, types/
+- [ ] Page d'accueil placeholder visible sur localhost:3000
+
+**Dependances:** S0-02`,
+            labels: ['Frontend', 'Sprint 0'],
+            checklist: ['Init Next.js + TypeScript', 'Installer TailwindCSS', 'Installer Zustand', 'Configurer ESLint + Prettier', 'Creer structure dossiers', 'Page placeholder']
+          },
+          {
+            list: TODO,
+            name: '[S0-04][2pts] Configurer le projet NestJS (Backend)',
+            desc: `**ID:** S0-04 | **Epic:** Infrastructure | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 2
+
+**Description:**
+Initialiser le projet NestJS avec TypeScript. Configurer les modules de base, Prisma ORM, et la connexion a PostgreSQL.
+
+**Criteres d'acceptation:**
+- [ ] Projet NestJS cree avec @nestjs/cli
+- [ ] Prisma installe et configure
+- [ ] schema.prisma avec premiers modeles (User, GameSession)
+- [ ] Connexion PostgreSQL fonctionnelle (local ou Docker)
+- [ ] Endpoint de sante GET /api/health → 200 OK
+- [ ] Structure : modules/, common/, config/
+
+**Dependances:** S0-02`,
+            labels: ['Backend', 'Sprint 0'],
+            checklist: ['Init NestJS + TypeScript', 'Installer Prisma ORM', 'Schema initial (User, GameSession)', 'Connexion PostgreSQL', 'Endpoint /api/health', 'Structure modules/common/config']
+          },
+          {
+            list: TODO,
+            name: '[S0-05][3pts] Configurer CI/CD avec GitHub Actions',
+            desc: `**ID:** S0-05 | **Epic:** Infrastructure | **Priorite:** MUST
+**Assigne:** Yassir | **Story Points:** 3
+
+**Description:**
+Mettre en place les workflows GitHub Actions pour le lint, les tests, et le deploiement automatique sur Vercel (front) et Railway (back).
+
+**Criteres d'acceptation:**
+- [ ] Workflow ci.yml : lint + tests sur chaque PR
+- [ ] Workflow deploy-front.yml : deploiement Vercel sur merge main
+- [ ] Workflow deploy-back.yml : deploiement Railway sur merge main
+- [ ] Badge de statut CI dans le README
+- [ ] npm audit integre au pipeline
+
+**Dependances:** S0-03, S0-04`,
+            labels: ['DevOps', 'Sprint 0'],
+            checklist: ['Workflow CI (lint + tests)', 'Workflow deploy frontend (Vercel)', 'Workflow deploy backend (Railway)', 'Badge CI dans README', 'npm audit integre']
+          },
+          {
+            list: TODO,
+            name: '[S0-06][5pts] Creer les maquettes UI/UX (Figma)',
+            desc: `**ID:** S0-06 | **Epic:** Design | **Priorite:** MUST
+**Assigne:** Yassir | **Story Points:** 5
+
+**Description:**
+Concevoir les maquettes de tous les ecrans cles de MYTHOS dans Figma : page d'accueil, catalogue scenarios, lobby, game UI (narration, choix, discussion, jauges), ecran de fin, admin. Definir le design system.
+
+**Criteres d'acceptation:**
+- [ ] Design system defini (palette sombre, typo, spacing)
+- [ ] Maquettes desktop + mobile pour :
+  - Page d'accueil + catalogue
+  - Page detail scenario
+  - Lobby (liste joueurs, chat, bouton lancer)
+  - Game UI : narration, choix, discussion, jauges
+  - Ecran de fin (revelations, resume, rejouer)
+  - Panel admin
+- [ ] Lien Figma partage avec l'equipe
+
+**Dependances:** Aucune`,
+            labels: ['Design', 'Sprint 0'],
+            checklist: ['Design system (couleurs, typo, spacing)', 'Maquette accueil + catalogue', 'Maquette detail scenario', 'Maquette lobby', 'Maquette Game UI (narration/choix/discussion)', 'Maquette jauges ressources (DEEP)', 'Maquette ecran de fin', 'Maquette panel admin', 'Responsive mobile']
+          },
+          {
+            list: TODO,
+            name: '[S0-07][1pt] Configurer GitHub Projects (Kanban)',
+            desc: `**ID:** S0-07 | **Epic:** Gestion de projet | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 1
+
+**Description:**
+Configurer le board GitHub Projects avec les colonnes Kanban, les labels, les milestones (sprints), et importer le backlog initial.
+
+**Criteres d'acceptation:**
+- [ ] Board avec colonnes : Backlog / To Do / In Progress / Review / Done
+- [ ] Labels crees : must-have, should-have, could-have, tech, doc, bug, spike
+- [ ] Milestones : Sprint 0 a Sprint 5 + Buffer
+- [ ] Tous les tickets du Sprint 0 importes
+- [ ] Vue Kanban + vue Table configurees
+
+**Dependances:** S0-02`,
+            labels: ['DevOps', 'Sprint 0'],
+            checklist: ['Creer colonnes Kanban', 'Creer labels', 'Creer milestones (sprints)', 'Importer tickets Sprint 0', 'Configurer vues']
+          },
+
+          // =====================================================
+          // SPRINT 1 – Fondations + POC IA (7 tickets, 29 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[S1-01][5pts] Implementer le modele de donnees complet (Prisma)',
+            desc: `**ID:** S1-01 | **Epic:** Backend – Data | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Definir le schema Prisma complet avec toutes les entites : User, GameSession, ScenarioPack, Player, GameRound, PlayerChoice. Creer les migrations et seeds (2 Scenario Packs : TRIBUNAL + DEEP).
+
+**Criteres d'acceptation:**
+- [ ] schema.prisma complet avec toutes les entites et relations
+- [ ] Enums : SessionStatus, Phase, PlayerStatus, UserRole
+- [ ] Migration initiale executable (npx prisma migrate dev)
+- [ ] Seed : 1 admin, 2 users test, Pack TRIBUNAL, Pack DEEP
+- [ ] npx prisma studio permet de visualiser les donnees
+
+**Dependances:** S0-04`,
+            labels: ['Backend', 'Sprint 1'],
+            checklist: ['Schema Prisma complet', 'Definir enums', 'Migration initiale', 'Seed donnees de test', 'Verifier Prisma Studio']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-02][5pts] Implementer l\'authentification (Register + Login)',
+            desc: `**ID:** S1-02 | **Epic:** Backend – Auth | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Implementer le module Auth NestJS avec inscription, connexion, et middleware JWT. Validation des entrees et hashage des mots de passe.
+
+**Criteres d'acceptation:**
+- [ ] POST /api/auth/register : cree un user, retourne JWT
+- [ ] POST /api/auth/login : verifie credentials, retourne JWT
+- [ ] Mots de passe hashes avec bcrypt (salt rounds: 10)
+- [ ] JWT avec expiration 24h, contient userId et role
+- [ ] Guard @UseGuards(JwtAuthGuard) fonctionnel
+- [ ] Validation DTO class-validator (email valide, password min 8)
+- [ ] Tests unitaires Auth (>= 80% coverage)
+
+**Dependances:** S1-01`,
+            labels: ['Backend', 'Sprint 1'],
+            checklist: ['POST /api/auth/register', 'POST /api/auth/login', 'Hashage bcrypt', 'JWT + expiration', 'Guard JwtAuthGuard', 'Validation DTO', 'Tests unitaires']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-03][3pts] Creer les pages Auth frontend (Register + Login)',
+            desc: `**ID:** S1-03 | **Epic:** Frontend – Auth | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 3
+
+**Description:**
+Pages d'inscription et connexion avec formulaires, validation cote client, et gestion du token JWT dans Zustand.
+
+**Criteres d'acceptation:**
+- [ ] Page /register avec formulaire (username, email, password, confirmation)
+- [ ] Page /login avec formulaire (email, password)
+- [ ] Validation des champs cote client
+- [ ] Appels API vers le backend
+- [ ] Token JWT stocke dans Zustand + localStorage
+- [ ] Redirection vers / apres connexion reussie
+- [ ] Messages d'erreur (email deja pris, mot de passe incorrect)
+
+**Dependances:** S1-02, S0-03`,
+            labels: ['Frontend', 'Sprint 1'],
+            checklist: ['Page /register', 'Page /login', 'Validation client', 'Appels API', 'Store JWT Zustand', 'Gestion erreurs']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-04][3pts] Creer l\'API CRUD Scenarios',
+            desc: `**ID:** S1-04 | **Epic:** Backend – Scenarios | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 3
+
+**Description:**
+Endpoints REST pour lister et consulter les Scenario Packs.
+
+**Criteres d'acceptation:**
+- [ ] GET /api/scenarios : liste des scenarios (id, name, slug, description, min/max players, duration, tags)
+- [ ] GET /api/scenarios/:slug : detail complet d'un scenario
+- [ ] Reponses paginées si necessaire
+- [ ] Tests unitaires
+
+**Dependances:** S1-01`,
+            labels: ['Backend', 'Sprint 1'],
+            checklist: ['GET /api/scenarios', 'GET /api/scenarios/:slug', 'Pagination', 'Tests unitaires']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-05][5pts] POC – AI Service (appel API Anthropic)',
+            desc: `**ID:** S1-05 | **Epic:** Backend – IA | **Priorite:** MUST | spike
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Creer le service AI dans NestJS. Premier flux complet : construction du prompt a partir d'un Scenario Pack + game_state → appel API Claude → parsing de la reponse JSON (narration + options + private_messages).
+
+**Criteres d'acceptation:**
+- [ ] AiService NestJS cree avec SDK Anthropic
+- [ ] Methode generateNarration(scenarioPack, gameState) fonctionnelle
+- [ ] Prompt construit dynamiquement : system prompt + game_state + instructions
+- [ ] Reponse IA parsee en JSON valide : { narration, options, private_messages }
+- [ ] Gestion erreur : retry 1x si parsing echoue, fallback si API down
+- [ ] Log temps de reponse (cible < 5s)
+- [ ] Strategie duale : Sonnet pour narration, Haiku pour setup
+- [ ] Test TRIBUNAL : 3 tours consecutifs coherents
+
+**Dependances:** S1-01, S1-04`,
+            labels: ['Backend', 'IA', 'Sprint 1'],
+            checklist: ['Setup SDK Anthropic', 'Service IA generateNarration()', 'Prompt dynamique', 'Parsing JSON reponse', 'Retry + fallback', 'Log latence', 'Strategie Sonnet/Haiku', 'Test 3 tours TRIBUNAL']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-06][3pts] POC – Page de test IA (frontend)',
+            desc: `**ID:** S1-06 | **Epic:** Frontend – IA | **Priorite:** MUST | spike
+**Assigne:** Youri + Samy | **Story Points:** 3
+
+**Description:**
+Page de test temporaire /poc-ai qui permet de tester le flux IA de bout en bout : selectionner un scenario, simuler un game_state, appeler l'API, afficher la narration et les options.
+
+**Criteres d'acceptation:**
+- [ ] Page /poc-ai accessible (dev only)
+- [ ] Selection d'un scenario
+- [ ] Bouton "Generer une scene" qui appelle le backend
+- [ ] Affichage narration avec effet streaming (texte progressif)
+- [ ] Affichage des options d'action
+- [ ] Affichage du temps de reponse
+- [ ] Possibilite de cliquer option et relancer (tour suivant)
+
+**Dependances:** S1-05`,
+            labels: ['Frontend', 'IA', 'Sprint 1'],
+            checklist: ['Page /poc-ai', 'Selection scenario', 'Bouton generer', 'Affichage streaming', 'Affichage options', 'Mesure latence', 'Enchainement tours']
+          },
+          {
+            list: BACKLOG,
+            name: '[S1-07][5pts] Rediger les Scenario Packs TRIBUNAL et DEEP (JSON)',
+            desc: `**ID:** S1-07 | **Epic:** Game Design | **Priorite:** MUST
+**Assigne:** Kays + Samy | **Story Points:** 5
+
+**Description:**
+Rediger les fichiers JSON complets des Scenario Packs TRIBUNAL et DEEP avec tous les champs : settings, roles, resources, phases_override, end_conditions, ai_system_prompt. Tester les prompts IA.
+
+**Criteres d'acceptation:**
+- [ ] tribunal.json complet : 5 roles, 5 rounds, phases override, prompt IA teste
+- [ ] deep.json complet : 3 roles, 4 ressources (O2, energie, coque, profondeur), 8 rounds
+- [ ] Prompts IA testes sur >= 3 parties simulees chacun
+- [ ] Narration coherente, options variees, messages prives pertinents
+- [ ] Fichiers valides en JSON Schema
+- [ ] Documentes dans GAME_ENGINE_CORE.md
+
+**Dependances:** S1-05`,
+            labels: ['Game', 'Sprint 1'],
+            checklist: ['tribunal.json complet', 'deep.json complet', 'Test 3 parties TRIBUNAL', 'Test 3 parties DEEP', 'Validation JSON Schema', 'Documentation GAME_ENGINE_CORE.md']
+          },
+
+          // =====================================================
+          // SPRINT 2 – Game Engine Core (7 tickets, 37 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[S2-01][3pts] Implementer le Scenario Pack Loader',
+            desc: `**ID:** S2-01 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 3
+
+**Description:**
+Service qui charge un Scenario Pack depuis la BDD, valide sa structure JSON, et le rend disponible au Game Engine.
+
+**Criteres d'acceptation:**
+- [ ] ScenarioPackLoaderService cree
+- [ ] Methode load(scenarioId) retourne un objet type
+- [ ] Validation JSON contre interface TypeScript ScenarioPack
+- [ ] Erreur explicite si Pack invalide ou introuvable
+- [ ] Tests unitaires avec fixture TRIBUNAL et DEEP
+
+**Dependances:** S1-01, S1-07`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['ScenarioPackLoaderService', 'Methode load()', 'Validation JSON/TypeScript', 'Gestion erreurs', 'Tests unitaires']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-02][5pts] Implementer le Game State Manager',
+            desc: `**ID:** S2-02 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Service qui cree, lit, met a jour et persiste le game_state dans Redis. Contient : session_id, scenario, current_round, phase, players, public_state, private_states, actions_history, end_conditions_met.
+
+**Criteres d'acceptation:**
+- [ ] GameStateManagerService cree
+- [ ] create(sessionId, scenarioPack, players) → init game_state
+- [ ] get(sessionId) → retourne game_state depuis Redis
+- [ ] update(sessionId, partialState) → merge partiel Redis
+- [ ] addToHistory(sessionId, round, narration)
+- [ ] recordAction(sessionId, round, playerId, action)
+- [ ] TTL Redis 2h (auto-cleanup sessions abandonnees)
+- [ ] Tests unitaires complets
+
+**Dependances:** S0-04`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['GameStateManagerService', 'create()', 'get()', 'update()', 'addToHistory()', 'recordAction()', 'TTL Redis 2h', 'Tests unitaires']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-03][3pts] Implementer le Role Manager',
+            desc: `**ID:** S2-03 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 3
+
+**Description:**
+Service qui distribue aleatoirement les roles aux joueurs en debut de partie, en respectant les contraintes du Scenario Pack (count par role, roles "fill" pour completer).
+
+**Criteres d'acceptation:**
+- [ ] RoleManagerService cree
+- [ ] assignRoles(players, scenarioPack.roles) → retourne assignation
+- [ ] Roles fixes (count: 1) assignes en premier, puis "fill"
+- [ ] Distribution aleatoire (Fisher-Yates shuffle)
+- [ ] Chaque joueur recoit : role_id, role_name, description, secret_info
+- [ ] Erreur si pas assez de joueurs pour roles obligatoires
+- [ ] Tests unitaires (distribution 4, 5, 6, 7, 8 joueurs)
+
+**Dependances:** S2-01`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['RoleManagerService', 'assignRoles()', 'Distribution roles fixes + fill', 'Fisher-Yates shuffle', 'Gestion erreurs', 'Tests (4-8 joueurs)']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-04][5pts] Implementer le Choice Engine',
+            desc: `**ID:** S2-04 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Service qui gere la collecte des choix des joueurs pendant la phase ACTION. Modes : individual, vote (majorite), designated. Gere les timers et timeouts.
+
+**Criteres d'acceptation:**
+- [ ] ChoiceEngineService cree
+- [ ] startActionPhase(sessionId, options, mode, timerSeconds)
+- [ ] submitChoice(sessionId, playerId, choiceId)
+- [ ] getResults(sessionId) → choix + resultat agrege
+- [ ] Mode individual : chaque joueur choisit secretement
+- [ ] Mode vote : majorite, egalite = aleatoire
+- [ ] Mode designated : seul le joueur designe choisit
+- [ ] Timeout : action par defaut (aleatoire ou "passe")
+- [ ] Tests unitaires pour chaque mode
+
+**Dependances:** S2-02`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['ChoiceEngineService', 'startActionPhase()', 'submitChoice()', 'getResults()', 'Mode individual', 'Mode vote', 'Mode designated', 'Gestion timeout', 'Tests par mode']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-05][3pts] Implementer le Resource Manager',
+            desc: `**ID:** S2-05 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 3
+
+**Description:**
+Service qui gere les jauges de ressources pour les scenarios (ex: DEEP). Applique la decroissance par tour, modifie selon choix joueurs, verifie conditions de fin.
+
+**Criteres d'acceptation:**
+- [ ] ResourceManagerService cree
+- [ ] initResources(scenarioPack.resources) → init jauges
+- [ ] applyDecay(resources) → applique decay_per_round
+- [ ] modifyResource(resourceId, delta) → +/- valeur (clampee min/max)
+- [ ] checkEndConditions(resources, endConditions) → boolean + type fin
+- [ ] Test DEEP : O2 descend, coque stable, profondeur modifiable
+
+**Dependances:** S2-02, S2-01`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['ResourceManagerService', 'initResources()', 'applyDecay()', 'modifyResource()', 'checkEndConditions()', 'Test avec DEEP']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-06][13pts] Implementer le Game Loop Manager',
+            desc: `**ID:** S2-06 | **Epic:** Backend – Game Engine | **Priorite:** MUST
+**Assigne:** Samy + Kays | **Story Points:** 13
+
+**Description:**
+Service central qui orchestre la boucle de jeu en 6 phases. Chef d'orchestre du Game Engine : appelle Scenario Pack Loader, Role Manager, Game State Manager, AI Service, Choice Engine, Resource Manager.
+
+**Criteres d'acceptation:**
+- [ ] GameLoopManagerService cree
+- [ ] Phase SETUP : charge scenario, assigne roles, appelle IA pour contexte initial
+- [ ] Phase NARRATION : envoie game_state a l'IA, recupere narration + options
+- [ ] Phase ACTION : demarre Choice Engine, collecte les choix
+- [ ] Phase RESOLUTION : envoie choix a l'IA, met a jour game_state + ressources
+- [ ] Phase DISCUSSION : demarre timer discussion
+- [ ] Phase CHECK FIN : verifie end_conditions (max_rounds, resource_zero, vote_reached)
+- [ ] Phase FINALE : appelle IA pour climax, revele roles
+- [ ] Transitions de phase automatiques
+- [ ] Support phases_override du Scenario Pack
+- [ ] Test d'integration : partie complete TRIBUNAL (5 tours) en API REST
+
+**Dependances:** S2-01, S2-02, S2-03, S2-04, S2-05, S1-05`,
+            labels: ['Backend', 'Game', 'Sprint 2'],
+            checklist: ['GameLoopManagerService', 'Phase SETUP', 'Phase NARRATION', 'Phase ACTION', 'Phase RESOLUTION', 'Phase DISCUSSION', 'Phase CHECK FIN', 'Phase FINALE', 'Transitions automatiques', 'Support phases_override', 'Test integration TRIBUNAL 5 tours']
+          },
+          {
+            list: BACKLOG,
+            name: '[S2-07][5pts] Ecrire les tests d\'integration du Game Engine',
+            desc: `**ID:** S2-07 | **Epic:** Tests | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Suite de tests d'integration simulant une partie complete pour chaque scenario via le Game Loop Manager.
+
+**Criteres d'acceptation:**
+- [ ] Test TRIBUNAL : 5 tours, 4 joueurs simules, transitions de phase
+- [ ] Test DEEP : partie avec jauges, decroissance, conditions de fin
+- [ ] Test erreur : joueur deconnecte en cours de partie
+- [ ] Test timeout : timer expire sans choix
+- [ ] Couverture Game Engine > 70%
+- [ ] Tests executables en CI (mock API IA)
+
+**Dependances:** S2-06`,
+            labels: ['Tests', 'Backend', 'Sprint 2'],
+            checklist: ['Test TRIBUNAL complet', 'Test DEEP avec jauges', 'Test deconnexion joueur', 'Test timeout', 'Couverture > 70%', 'Mock API IA pour CI']
+          },
+
+          // =====================================================
+          // SPRINT 3 – Multijoueur + TRIBUNAL (7 tickets, 37 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[S3-01][5pts] Implementer le WebSocket Gateway (NestJS + Socket.io)',
+            desc: `**ID:** S3-01 | **Epic:** Backend – Temps reel | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+WebSocket Gateway NestJS avec Socket.io. Auth JWT sur connexion WS, gestion des rooms (1 room = 1 session), evenements de base.
+
+**Criteres d'acceptation:**
+- [ ] GameGateway NestJS cree avec @WebSocketGateway()
+- [ ] Auth JWT verifiee au handleConnection
+- [ ] Evenements : player:join, player:leave, game:start
+- [ ] Gestion rooms : joueur rejoint auto la room de sa session
+- [ ] Deconnexion : joueur marque disconnected dans game_state
+- [ ] Reconnexion : joueur retrouve sa room et son etat
+- [ ] Logs connexions/deconnexions
+
+**Dependances:** S1-02`,
+            labels: ['Backend', 'Sprint 3'],
+            checklist: ['GameGateway NestJS', 'Auth JWT WebSocket', 'Events player:join/leave/game:start', 'Gestion rooms', 'Deconnexion propre', 'Reconnexion', 'Logs']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-02][5pts] Implementer le Session Manager (creation + lobby)',
+            desc: `**ID:** S3-02 | **Epic:** Backend – Sessions | **Priorite:** MUST
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Service gerant le cycle de vie des sessions : creation (choix scenario → code unique), gestion du lobby (joueurs connectes, chat pre-partie), lancement par l'hote.
+
+**Criteres d'acceptation:**
+- [ ] POST /api/sessions : cree session avec code 6 chars
+- [ ] GET /api/sessions/:code : info session + joueurs lobby
+- [ ] POST /api/sessions/:code/join : ajoute joueur
+- [ ] Event WS lobby:player_joined broadcast
+- [ ] Event WS lobby:player_left broadcast
+- [ ] Event WS lobby:chat pour chat de lobby
+- [ ] Hote lance quand nb_joueurs >= min_players
+- [ ] Event WS game:start declenche Game Loop Manager
+
+**Dependances:** S3-01, S2-06`,
+            labels: ['Backend', 'Sprint 3'],
+            checklist: ['POST /api/sessions', 'GET /api/sessions/:code', 'POST join', 'WS lobby:player_joined', 'WS lobby:player_left', 'WS lobby:chat', 'Lancement par hote', 'Declenchement Game Loop']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-03][8pts] Connecter le Game Loop au WebSocket',
+            desc: `**ID:** S3-03 | **Epic:** Backend – Integration | **Priorite:** MUST
+**Assigne:** Samy + Kays | **Story Points:** 8
+
+**Description:**
+Brancher le Game Loop Manager sur le WebSocket Gateway pour que toutes les phases emettent les evenements temps reel aux clients.
+
+**Criteres d'acceptation:**
+- [ ] NARRATION : emit game:narration (broadcast) + game:options + game:private_message (individuel)
+- [ ] ACTION : ecoute player:choice, transmet au Choice Engine
+- [ ] RESOLUTION : emit game:resolution (broadcast) + game:resources_update
+- [ ] DISCUSSION : emit game:phase_change → clients affichent chat
+- [ ] FINALE : emit game:finale avec revelations
+- [ ] timer:tick emis chaque seconde pendant phases avec timer
+- [ ] game:phase_change emis a chaque transition
+- [ ] Test : 2 clients WS simultanes recoivent les bonnes donnees
+
+**Dependances:** S3-01, S3-02, S2-06`,
+            labels: ['Backend', 'Game', 'Sprint 3'],
+            checklist: ['WS game:narration', 'WS game:options', 'WS game:private_message', 'WS player:choice', 'WS game:resolution', 'WS game:resources_update', 'WS timer:tick', 'WS game:phase_change', 'WS game:finale', 'Test 2 clients simultanes']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-04][3pts] Frontend – Page catalogue des scenarios',
+            desc: `**ID:** S3-04 | **Epic:** Frontend – Pages | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 3
+
+**Description:**
+Page d'accueil affichant les scenarios disponibles sous forme de cartes. Clic → page detail. Bouton "Creer une partie".
+
+**Criteres d'acceptation:**
+- [ ] Page / affiche les cards scenarios (GET /api/scenarios)
+- [ ] Card : nom, description courte, tags, nb joueurs, duree
+- [ ] Clic card → /scenarios/:slug (page detail)
+- [ ] Page detail : description complete + bouton "Creer une partie"
+- [ ] Responsive (2 colonnes desktop, 1 mobile)
+- [ ] Design conforme maquettes Figma
+
+**Dependances:** S1-04, S0-06`,
+            labels: ['Frontend', 'Sprint 3'],
+            checklist: ['Page catalogue /', 'Cards scenarios', 'Page detail /scenarios/:slug', 'Bouton creer partie', 'Responsive', 'Conformite Figma']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-05][5pts] Frontend – Page lobby',
+            desc: `**ID:** S3-05 | **Epic:** Frontend – Pages | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 5
+
+**Description:**
+Page de lobby avec joueurs connectes en temps reel, chat de lobby, code d'invitation copiable, bouton "Lancer la partie" (hote uniquement).
+
+**Criteres d'acceptation:**
+- [ ] Page /session/:code accessible apres creation ou join
+- [ ] Connexion WebSocket automatique
+- [ ] Liste joueurs temps reel (join/leave)
+- [ ] Code d'invitation + bouton "Copier"
+- [ ] Chat de lobby fonctionnel (envoi/reception WS)
+- [ ] Bouton "Lancer" visible uniquement par hote, actif quand min_players
+- [ ] Clic "Lancer" → transition vers Game UI
+
+**Dependances:** S3-02, S3-01`,
+            labels: ['Frontend', 'Sprint 3'],
+            checklist: ['Page /session/:code', 'Connexion WS auto', 'Liste joueurs temps reel', 'Code invitation + copier', 'Chat lobby', 'Bouton lancer (hote)', 'Transition vers Game UI']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-06][8pts] Frontend – Game UI (narration + choix + discussion)',
+            desc: `**ID:** S3-06 | **Epic:** Frontend – Game UI | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 8
+
+**Description:**
+Interface de jeu principale : narration streaming, options de choix avec timer, phase discussion (chat), panneau infos privees (role, secret), indicateur de tour.
+
+**Criteres d'acceptation:**
+- [ ] Composant NarrationPanel : texte avec streaming
+- [ ] Composant ChoicePanel : options + timer + selection
+- [ ] Composant DiscussionPanel : chat libre + bouton "Pret" + timer
+- [ ] Composant PrivateInfoPanel : role, objectif, indices secrets
+- [ ] Composant ProgressBar : tour actuel / total
+- [ ] Composant PhaseIndicator : phase en cours
+- [ ] Transitions animees entre phases
+- [ ] Ecoute events WS + mise a jour Zustand
+- [ ] Responsive mobile
+
+**Dependances:** S3-03, S0-06`,
+            labels: ['Frontend', 'Game', 'Sprint 3'],
+            checklist: ['NarrationPanel (streaming)', 'ChoicePanel (options + timer)', 'DiscussionPanel (chat + pret)', 'PrivateInfoPanel (role + secrets)', 'ProgressBar', 'PhaseIndicator', 'Transitions animees', 'Integration WS + Zustand', 'Responsive mobile']
+          },
+          {
+            list: BACKLOG,
+            name: '[S3-07][3pts] Test E2E – Partie complete TRIBUNAL',
+            desc: `**ID:** S3-07 | **Epic:** Tests | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 3
+
+**Description:**
+Test de bout en bout d'une partie complete de TRIBUNAL avec 4 joueurs (navigateurs reels ou puppeteer).
+
+**Criteres d'acceptation:**
+- [ ] 4 navigateurs/onglets ouverts simultanement
+- [ ] Creer session → 3 joueurs rejoignent → Lancer
+- [ ] 5 tours joues : narration, choix, resolution, discussion
+- [ ] Roles secrets distribues et affiches correctement
+- [ ] Ecran de fin avec revelations
+- [ ] Aucune erreur console, aucun crash
+- [ ] Temps de reponse IA < 5s mesure
+
+**Dependances:** S3-06`,
+            labels: ['Tests', 'Game', 'Sprint 3'],
+            checklist: ['Setup 4 navigateurs', 'Creation + join session', '5 tours complets', 'Verification roles', 'Ecran de fin', 'Zero erreur console', 'Mesure latence IA']
+          },
+
+          // =====================================================
+          // SPRINT 4 – DEEP + UI Complète (7 tickets, 29 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[S4-01][3pts] Frontend – Composant jauges de ressources',
+            desc: `**ID:** S4-01 | **Epic:** Frontend – Game UI | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 3
+
+**Description:**
+Composant React affichant les jauges de ressources (O2, energie, coque, profondeur) pour DEEP. Barres visuelles + labels textuels (accessibilite). Animation de transition.
+
+**Criteres d'acceptation:**
+- [ ] Composant ResourceGauges affiche les barres dynamiquement
+- [ ] Couleurs : vert > 60%, orange 30-60%, rouge < 30%
+- [ ] Labels textuels (ex: "Oxygene : 45/100") pour accessibilite
+- [ ] Animation smooth quand valeur change
+- [ ] Ecoute event WS game:resources_update
+- [ ] Conditionnel : affiche seulement si scenario a des resources
+- [ ] Responsive
+
+**Dependances:** S2-05, S3-06`,
+            labels: ['Frontend', 'Sprint 4'],
+            checklist: ['ResourceGauges composant', 'Couleurs dynamiques', 'Labels accessibilite', 'Animations', 'Ecoute WS resources_update', 'Conditionnel', 'Responsive']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-02][5pts] Frontend – Ecran de fin de partie',
+            desc: `**ID:** S4-02 | **Epic:** Frontend – Game UI | **Priorite:** MUST
+**Assigne:** Samy + Youri | **Story Points:** 5
+
+**Description:**
+Ecran de fin : climax narratif, revelation des roles, resume de la partie (choix cles), resultat (victoire/defaite), boutons "Rejouer" / "Retour au catalogue".
+
+**Criteres d'acceptation:**
+- [ ] Section : texte du climax final (narration IA)
+- [ ] Section : tableau revelation roles (joueur → role → objectif secret)
+- [ ] Section : timeline resumee (moments cles chaque tour)
+- [ ] Section : resultat (victoire/defaite + explication)
+- [ ] Pour DEEP : affichage final des jauges
+- [ ] Bouton "Rejouer" → retour lobby meme session
+- [ ] Bouton "Nouveau scenario" → retour catalogue
+- [ ] Animations reveal progressif
+
+**Dependances:** S3-06`,
+            labels: ['Frontend', 'Sprint 4'],
+            checklist: ['Climax narratif', 'Tableau revelation roles', 'Timeline resume', 'Resultat victoire/defaite', 'Jauges finales DEEP', 'Bouton Rejouer', 'Bouton Nouveau scenario', 'Animations reveal']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-03][5pts] Implementer le streaming IA (reponse progressive)',
+            desc: `**ID:** S4-03 | **Epic:** Backend – IA | **Priorite:** SHOULD
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Modifier l'AI Service pour utiliser le streaming de l'API Claude. La narration est envoyee progressivement via WebSocket, donnant un effet "l'IA ecrit en temps reel".
+
+**Criteres d'acceptation:**
+- [ ] AI Service utilise stream: true dans appel API Anthropic
+- [ ] Chunks de texte emis via WS game:narration_chunk
+- [ ] Frontend concatene les chunks et affiche progressivement
+- [ ] JSON structure (options, private_messages) parse a la fin du stream
+- [ ] Fallback : si streaming echoue, retour mode non-streame
+- [ ] Temps percu reduit (premiere ligne visible < 1s)
+
+**Dependances:** S1-05, S3-03`,
+            labels: ['Backend', 'IA', 'Sprint 4'],
+            checklist: ['stream: true API Anthropic', 'WS game:narration_chunk', 'Concatenation frontend', 'Parsing JSON fin de stream', 'Fallback non-streame', 'Mesure temps percu < 1s']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-04][3pts] Test E2E – Partie complete DEEP',
+            desc: `**ID:** S4-04 | **Epic:** Tests | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 3
+
+**Description:**
+Test de bout en bout d'une partie complete de DEEP avec 3-4 joueurs. Verifier jauges, decroissance, conditions de fin.
+
+**Criteres d'acceptation:**
+- [ ] Partie DEEP jouable de bout en bout
+- [ ] Jauges affichees et mises a jour chaque tour
+- [ ] Scenario victoire teste (profondeur → 0)
+- [ ] Scenario defaite teste (O2 → 0)
+- [ ] Ecran de fin coherent avec le resultat
+
+**Dependances:** S4-01, S4-02`,
+            labels: ['Tests', 'Game', 'Sprint 4'],
+            checklist: ['Partie DEEP complete', 'Jauges fonctionnelles', 'Test victoire', 'Test defaite', 'Ecran de fin coherent']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-05][3pts] Frontend – Historique narratif (timeline)',
+            desc: `**ID:** S4-05 | **Epic:** Frontend – Game UI | **Priorite:** SHOULD
+**Assigne:** Samy + Youri | **Story Points:** 3
+
+**Description:**
+Panneau lateral ou modal affichant l'historique des tours passes : resume de chaque narration et choix effectues.
+
+**Criteres d'acceptation:**
+- [ ] Bouton "Historique" dans la Game UI
+- [ ] Panel/modal avec liste des tours (1, 2, 3...)
+- [ ] Chaque tour : resume narration + choix effectue
+- [ ] Scrollable
+- [ ] Fermeture facile (clic exterieur ou bouton)
+
+**Dependances:** S3-06`,
+            labels: ['Frontend', 'Sprint 4'],
+            checklist: ['Bouton Historique', 'Panel/modal tours', 'Resume narration + choix', 'Scrollable', 'Fermeture facile']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-06][5pts] Polir l\'UI Game – Responsive + Animations',
+            desc: `**ID:** S4-06 | **Epic:** Frontend – Polish | **Priorite:** MUST
+**Assigne:** Youri + Yassir | **Story Points:** 5
+
+**Description:**
+Pass de polish sur toute la Game UI : responsive mobile parfait, animations de transition entre phases, micro-interactions, loading states, etats vides/erreur.
+
+**Criteres d'acceptation:**
+- [ ] Game UI parfaitement utilisable sur mobile (320px+)
+- [ ] Transitions animees entre chaque phase (fade/slide)
+- [ ] Loading state "L'IA reflechit..." avec animation
+- [ ] Timer : animation compte a rebours (cercle ou barre)
+- [ ] Etats d'erreur : message clair si deconnexion, timeout IA, etc.
+- [ ] Conformite maquettes Figma
+
+**Dependances:** S3-06, S0-06`,
+            labels: ['Frontend', 'Design', 'Sprint 4'],
+            checklist: ['Responsive mobile 320px+', 'Animations transitions phases', 'Loading state IA', 'Animation timer', 'Etats erreur', 'Conformite Figma']
+          },
+          {
+            list: BACKLOG,
+            name: '[S4-07][5pts] Gestion de la reconnexion joueur',
+            desc: `**ID:** S4-07 | **Epic:** Backend – Robustesse | **Priorite:** SHOULD
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Gerer le cas ou un joueur se deconnecte en cours de partie. Le joueur doit pouvoir se reconnecter et retrouver l'etat de la partie.
+
+**Criteres d'acceptation:**
+- [ ] Deconnexion detectee : joueur marque disconnected
+- [ ] La partie continue (joueur disconnecte passe en timeout auto)
+- [ ] Reconnexion : joueur rejoint room + recoit game_state courant
+- [ ] UI se remet a jour immediatement apres reconnexion
+- [ ] Si joueur ne revient pas apres 2 min : sorti definitivement
+- [ ] Message aux autres : "[Joueur] s'est deconnecte / reconnecte"
+
+**Dependances:** S3-01, S3-03`,
+            labels: ['Backend', 'Sprint 4'],
+            checklist: ['Detection deconnexion', 'Timeout automatique', 'Reconnexion + game_state', 'MAJ UI immediate', 'Timeout definitif 2min', 'Messages aux joueurs']
+          },
+
+          // =====================================================
+          // SPRINT 5 – Admin + Accessibilité + Deploy (7 tickets, 26 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[S5-01][5pts] Backend – API Admin (stats + gestion)',
+            desc: `**ID:** S5-01 | **Epic:** Backend – Admin | **Priorite:** SHOULD
+**Assigne:** Samy | **Story Points:** 5
+
+**Description:**
+Endpoints admin proteges (role: admin) : statistiques d'utilisation, liste des sessions, gestion des utilisateurs.
+
+**Criteres d'acceptation:**
+- [ ] GET /api/admin/stats : nb sessions, nb joueurs, scenario populaire, duree moyenne, taux completion
+- [ ] GET /api/admin/sessions : liste paginee (actives + passees)
+- [ ] GET /api/admin/users : liste paginee utilisateurs
+- [ ] PATCH /api/admin/users/:id : ban/unban
+- [ ] Tous endpoints proteges par AdminGuard
+- [ ] Tests unitaires
+
+**Dependances:** S1-02`,
+            labels: ['Backend', 'Sprint 5'],
+            checklist: ['GET /api/admin/stats', 'GET /api/admin/sessions', 'GET /api/admin/users', 'PATCH ban/unban', 'AdminGuard', 'Tests unitaires']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-02][5pts] Frontend – Panel d\'administration',
+            desc: `**ID:** S5-02 | **Epic:** Frontend – Admin | **Priorite:** SHOULD
+**Assigne:** Samy + Youri | **Story Points:** 5
+
+**Description:**
+Interface d'administration avec dashboard de stats, liste des sessions, et gestion des utilisateurs. Accessible uniquement aux admins.
+
+**Criteres d'acceptation:**
+- [ ] Page /admin protegee (redirect si non-admin)
+- [ ] Dashboard : cartes stats (nb sessions, joueurs, scenario populaire, duree moyenne)
+- [ ] Tableau sessions (filtres : actives/terminees/annulees)
+- [ ] Tableau utilisateurs (recherche, bouton ban)
+- [ ] Design conforme, responsive
+
+**Dependances:** S5-01`,
+            labels: ['Frontend', 'Sprint 5'],
+            checklist: ['Page /admin protegee', 'Dashboard stats', 'Tableau sessions', 'Tableau utilisateurs', 'Responsive']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-03][5pts] Audit et corrections d\'accessibilite',
+            desc: `**ID:** S5-03 | **Epic:** Accessibilite | **Priorite:** MUST
+**Assigne:** Yassir + Youri | **Story Points:** 5
+
+**Description:**
+Audit complet d'accessibilite (Lighthouse + WAVE + test manuel clavier/lecteur d'ecran) et corrections pour atteindre WCAG 2.1 AA.
+
+**Criteres d'acceptation:**
+- [ ] Lighthouse Accessibility > 90 sur toutes les pages
+- [ ] WAVE : 0 erreur, alertes justifiees documentees
+- [ ] Navigation clavier : toutes actions accessibles
+- [ ] Lecteur d'ecran : test VoiceOver/NVDA sur flux de jeu complet
+- [ ] Contrastes : ratio >= 4.5:1 verifie
+- [ ] Attributs ARIA sur tous composants interactifs
+- [ ] Option "Timers prolonges" dans parametres lobby
+- [ ] Rapport d'audit exporte (PDF) pour dossier RNCP
+
+**Dependances:** S4-06`,
+            labels: ['Frontend', 'Design', 'Sprint 5'],
+            checklist: ['Lighthouse > 90', 'WAVE 0 erreur', 'Navigation clavier', 'Test lecteur ecran', 'Contrastes 4.5:1', 'Attributs ARIA', 'Option timers prolonges', 'Rapport audit PDF']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-04][3pts] Deploiement production',
+            desc: `**ID:** S5-04 | **Epic:** Infrastructure | **Priorite:** MUST
+**Assigne:** Yassir | **Story Points:** 3
+
+**Description:**
+Deployer le MVP complet en production sur Vercel (front) + Railway (back + PostgreSQL + Redis). Configurer env vars, domaine, monitoring de base.
+
+**Criteres d'acceptation:**
+- [ ] Frontend deploye sur Vercel avec URL publique
+- [ ] Backend deploye sur Railway avec URL publique
+- [ ] PostgreSQL et Redis provisionnes sur Railway
+- [ ] Variables d'environnement configurees (API keys, DB URL, etc.)
+- [ ] HTTPS actif sur les deux URLs
+- [ ] Health check fonctionnel (/api/health → 200)
+- [ ] CORS configure pour domaine frontend
+- [ ] Test E2E sur la prod (1 partie complete)
+
+**Dependances:** S5-03`,
+            labels: ['DevOps', 'Sprint 5'],
+            checklist: ['Deploy Vercel (frontend)', 'Deploy Railway (backend)', 'Provisioner PostgreSQL + Redis', 'Configurer env vars', 'HTTPS actif', 'Health check', 'CORS', 'Test E2E en prod']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-05][2pts] Configurer le monitoring et health check',
+            desc: `**ID:** S5-05 | **Epic:** Infrastructure | **Priorite:** SHOULD
+**Assigne:** Yassir | **Story Points:** 2
+
+**Description:**
+Monitoring de base : UptimeRobot pour health check, logging structure cote backend, dashboard des couts API Anthropic.
+
+**Criteres d'acceptation:**
+- [ ] UptimeRobot configure : ping /api/health toutes les 5 min
+- [ ] Alertes par email/Discord si downtime
+- [ ] Logs structures (JSON) NestJS avec niveaux (info, warn, error)
+- [ ] Dashboard Anthropic consulte : couts du mois
+- [ ] Metriques basiques loguees : nb sessions/jour, temps moyen IA, erreurs IA
+
+**Dependances:** S5-04`,
+            labels: ['DevOps', 'Sprint 5'],
+            checklist: ['UptimeRobot /api/health', 'Alertes email/Discord', 'Logs structures JSON', 'Dashboard couts Anthropic', 'Metriques basiques']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-06][5pts] Ecrire les tests finaux (couverture cible)',
+            desc: `**ID:** S5-06 | **Epic:** Tests | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 5
+
+**Description:**
+Completer les tests unitaires et d'integration pour atteindre la couverture cible. Rediger les tests E2E critiques.
+
+**Criteres d'acceptation:**
+- [ ] Backend : couverture > 60%
+- [ ] Frontend : couverture > 40%
+- [ ] Tests E2E : flux complet (register → creer session → jouer → fin) automatise
+- [ ] Tous les tests passent en CI
+- [ ] Rapport de couverture genere et archive
+
+**Dependances:** Tous les tickets precedents`,
+            labels: ['Tests', 'Sprint 5'],
+            checklist: ['Backend couverture > 60%', 'Frontend couverture > 40%', 'E2E flux complet', 'CI green', 'Rapport couverture']
+          },
+          {
+            list: BACKLOG,
+            name: '[S5-07][1pt] Mesurer l\'eco-index',
+            desc: `**ID:** S5-07 | **Epic:** Numerique responsable | **Priorite:** MUST
+**Assigne:** Yassir | **Story Points:** 1
+
+**Description:**
+Executer GreenIT Analysis sur toutes les pages en production. Documenter les scores et axes d'amelioration.
+
+**Criteres d'acceptation:**
+- [ ] GreenIT Analysis execute sur : accueil, lobby, game UI, admin
+- [ ] Score eco-index >= 50 sur toutes les pages
+- [ ] Poids des pages < 1 Mo
+- [ ] Rapport exporte pour dossier RNCP
+- [ ] Si score < 50 : actions correctives listees
+
+**Dependances:** S5-04`,
+            labels: ['DevOps', 'Sprint 5'],
+            checklist: ['GreenIT sur accueil', 'GreenIT sur lobby', 'GreenIT sur game UI', 'GreenIT sur admin', 'Rapport RNCP', 'Actions correctives si < 50']
+          },
+
+          // =====================================================
+          // SPRINT BUFFER – Finalisation (5 tickets, 15 SP)
+          // =====================================================
+          {
+            list: BACKLOG,
+            name: '[SB-01][5pts] Corriger les bugs restants',
+            desc: `**ID:** SB-01 | **Epic:** Bugs | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 5
+
+**Description:**
+Traiter tous les bugs ouverts identifies pendant les sprints precedents. Prioriser les bugs bloquants et majeurs.
+
+**Criteres d'acceptation:**
+- [ ] 0 bug bloquant ouvert
+- [ ] 0 bug majeur ouvert
+- [ ] Bugs mineurs documentes comme "limites connues"
+- [ ] Chaque fix accompagne d'un test de non-regression
+
+**Dependances:** Tous les sprints`,
+            labels: ['Backend', 'Frontend', 'Buffer'],
+            checklist: ['Trier bugs par severite', 'Corriger bugs bloquants', 'Corriger bugs majeurs', 'Documenter bugs mineurs', 'Tests non-regression']
+          },
+          {
+            list: BACKLOG,
+            name: '[SB-02][3pts] Rediger la documentation technique finale',
+            desc: `**ID:** SB-02 | **Epic:** Documentation | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 3
+
+**Description:**
+Finaliser toute la documentation : README avec procedure de demarrage, doc technique (API, WebSocket, Scenario Packs), et mise a jour du cahier des charges.
+
+**Criteres d'acceptation:**
+- [ ] README complet : description, stack, install, migrations/seeds, dev, tests
+- [ ] Documentation API (endpoints REST + events WS) a jour
+- [ ] Documentation Scenario Pack (comment en creer un nouveau)
+- [ ] Cahier des charges mis a jour (version finale)
+- [ ] Journal de bord equipe finalise (Notion)
+
+**Dependances:** SB-01`,
+            labels: ['Doc', 'Buffer'],
+            checklist: ['README complet', 'Doc API REST', 'Doc WebSocket events', 'Doc Scenario Packs', 'CDC version finale', 'Journal de bord Notion']
+          },
+          {
+            list: BACKLOG,
+            name: '[SB-03][2pts] Rediger l\'annexe retour d\'experience',
+            desc: `**ID:** SB-03 | **Epic:** Documentation | **Priorite:** MUST
+**Assigne:** Toute l'equipe (individuel) | **Story Points:** 2
+
+**Description:**
+Chaque membre redige son annexe de retour d'experience : ecarts entre previsionnel et realise, limites identifiees, axes d'amelioration du cahier des charges.
+
+**Criteres d'acceptation:**
+- [ ] Chaque membre a un document individuel (PDF, 2-3 pages)
+- [ ] Ecarts documentes (planning, budget, fonctionnalites)
+- [ ] Limites techniques identifiees (latence IA, coherence narrative, etc.)
+- [ ] Propositions concretes d'amelioration
+- [ ] Bilan personnel / analyse reflexive
+
+**Dependances:** SB-01`,
+            labels: ['Doc', 'Buffer'],
+            checklist: ['REX Kays', 'REX Samy', 'REX Youri', 'REX Yassir']
+          },
+          {
+            list: BACKLOG,
+            name: '[SB-04][2pts] Tourner la video de demonstration',
+            desc: `**ID:** SB-04 | **Epic:** Livrable | **Priorite:** MUST
+**Assigne:** Yassir + Kays | **Story Points:** 2
+
+**Description:**
+Tourner et monter une video de demonstration du MVP montrant le parcours complet : catalogue → creation session → lobby → partie TRIBUNAL → partie DEEP → ecran de fin.
+
+**Criteres d'acceptation:**
+- [ ] Duree : 3-5 minutes
+- [ ] Montre les 2 scenarios (TRIBUNAL + DEEP)
+- [ ] Qualite professionnelle (>= 1080p, voix off ou sous-titres)
+- [ ] Publiee sur YouTube (lien public)
+- [ ] Lien ajoute dans le README
+
+**Dependances:** SB-01`,
+            labels: ['Design', 'Buffer'],
+            checklist: ['Script de la demo', 'Enregistrement TRIBUNAL', 'Enregistrement DEEP', 'Montage + voix off', 'Upload YouTube', 'Lien dans README']
+          },
+          {
+            list: BACKLOG,
+            name: '[SB-05][3pts] Preparer la soutenance',
+            desc: `**ID:** SB-05 | **Epic:** Soutenance | **Priorite:** MUST
+**Assigne:** Toute l'equipe | **Story Points:** 3
+
+**Description:**
+Preparer les supports de soutenance : slides pour la presentation collective (10 min) et preparation individuelle pour l'evaluation RNCP (20 min par candidat).
+
+**Criteres d'acceptation:**
+- [ ] Slides collective : contexte, methodologie, demo, bilan (10 min)
+- [ ] Chaque membre prepare sa presentation individuelle couvrant C1.1 a C1.7
+- [ ] Extraits de livrables prets a montrer (planning, KPI, backlog, risques)
+- [ ] Captures d'ecran de GitHub Projects, Notion, monitoring
+- [ ] Repetition en groupe effectuee (chrono respecte)
+
+**Dependances:** SB-02, SB-03, SB-04`,
+            labels: ['Doc', 'Buffer'],
+            checklist: ['Slides collective 10 min', 'Presentation Kays (C1.1-C1.7)', 'Presentation Samy (C1.1-C1.7)', 'Presentation Youri (C1.1-C1.7)', 'Presentation Yassir (C1.1-C1.7)', 'Extraits livrables', 'Repetition chronometree']
+          },
+
+          // =====================================================
+          // ICEBOX – Post-MVP (7 cartes)
+          // =====================================================
+          {
+            list: ICE,
+            name: 'Scenario CHRONOS (voyages temporels)',
+            desc: 'Post-MVP. Mecaniques de timeline et paradoxes temporels.\nJoueurs manipulent une frise chronologique, chaque action peut creer des paradoxes que l\'IA gere narrativement.',
+            labels: ['Game'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'Scenario MASCARADE (intrigues de cour)',
+            desc: 'Post-MVP. Mecaniques d\'identites secretes et intrigues de cour.\nInspire de jeux de roles sociaux, chaque joueur a une identite cachee et des objectifs contradictoires.',
+            labels: ['Game'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'Scenario SIGNAL (premier contact extraterrestre)',
+            desc: 'Post-MVP. Mecaniques de decodage et communication alien.\nLes joueurs doivent decoder un signal extraterrestre et decider comment repondre.',
+            labels: ['Game'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'Matchmaking automatique',
+            desc: 'Systeme de matchmaking pour assembler des joueurs automatiquement.\nFile d\'attente par scenario, regroupement par nombre de joueurs, gestion des timeouts.',
+            labels: ['Backend', 'Frontend'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'OAuth Google / Discord',
+            desc: 'Connexion via providers OAuth en plus de email/password.\nGoogle OAuth2, Discord OAuth2, liaison de comptes existants.',
+            labels: ['Backend', 'Frontend'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'Editeur de Scenario Packs (UGC)',
+            desc: 'Interface permettant a la communaute de creer ses propres scenarios.\nEditeur visuel de Scenario Pack JSON, validation automatique, systeme de publication/moderation.',
+            labels: ['Frontend', 'Game'],
+            checklist: []
+          },
+          {
+            list: ICE,
+            name: 'Systeme de monetisation (freemium)',
+            desc: 'Modele economique avec scenarios gratuits et premium.\nStripe integration, scenarios de base gratuits, packs premium payants.',
+            labels: ['Backend'],
+            checklist: []
+          }
+        ];
+
+        let done = 0;
+        const total = cardsData.length;
+
+        for (const c of cardsData) {
+          const listId = lists[c.list];
+          if (!listId) {
+            log(`  ⚠ Liste introuvable pour "${c.name}" (list: ${c.list})`, 'warn');
+            done++;
+            continue;
+          }
+          const labelIds = c.labels.map(l => labels[l]).filter(Boolean).join(',');
+
+          const card = await api('POST', '/cards', {
+            idList: listId,
+            name: c.name,
+            desc: c.desc,
+            idLabels: labelIds,
+            pos: 'bottom'
+          });
+
+          if (c.checklist && c.checklist.length > 0) {
+            const cl = await api('POST', `/cards/${card.id}/checklists`, { name: 'Sous-taches' });
+            for (const item of c.checklist) {
+              await api('POST', `/checklists/${cl.id}/checkItems`, { name: item });
+              await delay(80);
+            }
+          }
+
+          done++;
+          setProgress(15 + (done / total) * 80);
+          log(`  ✓ [${done}/${total}] ${c.name.substring(0, 55)}...`, 'ok');
+
+          await delay(150);
+        }
+
+        setProgress(100);
+        log('', 'info');
+        log('==========================================', 'ok');
+        log('  IMPORT TERMINE ! 54 cartes creees.', 'ok');
+        log('  Rafraichis ton board Trello.', 'ok');
+        log('==========================================', 'ok');
+        log(`  47 tickets (S0-01 → SB-05) + 7 icebox`, 'info');
+        log(`  196 SP | 6 listes Kanban | Labels sprint pour filtrer`, 'info');
+
+        btn.textContent = 'Import termine !';
+        btn.style.background = '#00b894';
+
+      } catch (err) {
+        log(`ERREUR: ${err.message}`, 'err');
+        log('Verifie ta cle API, ton token et l\'ID du board.', 'warn');
+        btn.disabled = false;
+        btn.textContent = 'Reessayer';
+      }
+    }
+  </script>
+</body>
+</html>

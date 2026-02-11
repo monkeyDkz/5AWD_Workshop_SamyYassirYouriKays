@@ -1,0 +1,927 @@
+{
+  "name": "MYTHOS \u2013 Projet 5AWD",
+  "desc": "Backlog complet du projet MYTHOS - Plateforme de jeux narratifs multijoueurs pilot\u00e9s par IA.\n47 tickets | 196 SP | 7 sprints + buffer + icebox\n\u00c9quipe: Kays (PO/Arch), Samy (SM/Backend+IA), Youri (Frontend), Yassir (UX/DevOps)\n14 semaines",
+  "labels": [
+    { "name": "Frontend", "color": "sky" },
+    { "name": "Backend", "color": "green" },
+    { "name": "IA", "color": "purple" },
+    { "name": "DevOps", "color": "pink" },
+    { "name": "Design", "color": "yellow" },
+    { "name": "Game", "color": "red" },
+    { "name": "Tests", "color": "orange" }
+  ],
+  "members": [
+    { "fullName": "Kays", "username": "kays_po_arch", "initials": "K", "role": "PO / Architecte" },
+    { "fullName": "Samy", "username": "samy_sm_backend_ia", "initials": "S", "role": "SM / Backend + IA" },
+    { "fullName": "Youri", "username": "youri_frontend", "initials": "Y", "role": "Frontend Lead" },
+    { "fullName": "Yassir", "username": "yassir_ux_devops", "initials": "YA", "role": "UX / DevOps" }
+  ],
+  "lists": [
+    {
+      "name": "\ud83d\udccb Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) [23 SP]",
+      "cards": [
+        {
+          "name": "[S0-01][8 SP] R\u00e9diger cahier des charges v1",
+          "desc": "## S0-01 \u2013 R\u00e9diger cahier des charges v1\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Doc |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 8 |\n\n### Description\nR\u00e9diger le cahier des charges complet v1 du projet MYTHOS couvrant les 11 sections obligatoires et les comp\u00e9tences C1.1 \u00e0 C1.7.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] 11 sections du CDC compl\u00e8tes\n- [ ] Comp\u00e9tences C1.1 \u00e0 C1.7 couvertes\n- [ ] Relu et valid\u00e9 par tous les membres de l\u2019\u00e9quipe\n- [ ] PDF export\u00e9 et archiv\u00e9",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "11 sections du CDC compl\u00e8tes",
+                "Comp\u00e9tences C1.1 \u00e0 C1.7 couvertes",
+                "Relu et valid\u00e9 par tous les membres de l\u2019\u00e9quipe",
+                "PDF export\u00e9 et archiv\u00e9"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-02][2 SP] Initialiser repo GitHub",
+          "desc": "## S0-02 \u2013 Initialiser repo GitHub\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Yassir |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 2 |\n\n### Description\nCr\u00e9er et configurer le repository GitHub avec les branches, protections et templates n\u00e9cessaires.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Repo cr\u00e9\u00e9 sur GitHub\n- [ ] Branche main prot\u00e9g\u00e9e\n- [ ] Branche develop cr\u00e9\u00e9e\n- [ ] .gitignore configur\u00e9\n- [ ] README initial r\u00e9dig\u00e9\n- [ ] Templates PR et issues cr\u00e9\u00e9s",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Repo cr\u00e9\u00e9 sur GitHub",
+                "Branche main prot\u00e9g\u00e9e",
+                "Branche develop cr\u00e9\u00e9e",
+                ".gitignore configur\u00e9",
+                "README initial r\u00e9dig\u00e9",
+                "Templates PR et issues cr\u00e9\u00e9s"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-03][2 SP] Configurer Next.js frontend",
+          "desc": "## S0-03 \u2013 Configurer Next.js frontend\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 2 |\n\n### Description\nInitialiser le projet frontend Next.js 14 avec App Router et toutes les d\u00e9pendances de base.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Next.js 14 App Router install\u00e9 et configur\u00e9\n- [ ] Tailwind CSS configur\u00e9\n- [ ] Zustand install\u00e9\n- [ ] ESLint configur\u00e9\n- [ ] Prettier configur\u00e9\n- [ ] Page placeholder affich\u00e9e",
+          "labels": ["Frontend", "DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Next.js 14 App Router install\u00e9 et configur\u00e9",
+                "Tailwind CSS configur\u00e9",
+                "Zustand install\u00e9",
+                "ESLint configur\u00e9",
+                "Prettier configur\u00e9",
+                "Page placeholder affich\u00e9e"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-04][2 SP] Configurer NestJS backend",
+          "desc": "## S0-04 \u2013 Configurer NestJS backend\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 2 |\n\n### Description\nInitialiser le projet backend NestJS avec Prisma ORM et la base PostgreSQL.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] NestJS CLI install\u00e9 et projet initialis\u00e9\n- [ ] Prisma ORM install\u00e9 et configur\u00e9\n- [ ] Schema Prisma initial avec mod\u00e8les User et GameSession\n- [ ] Base PostgreSQL connect\u00e9e\n- [ ] GET /api/health retourne 200",
+          "labels": ["Backend", "DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "NestJS CLI install\u00e9 et projet initialis\u00e9",
+                "Prisma ORM install\u00e9 et configur\u00e9",
+                "Schema Prisma initial avec mod\u00e8les User et GameSession",
+                "Base PostgreSQL connect\u00e9e",
+                "GET /api/health retourne 200"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-05][3 SP] CI/CD GitHub Actions",
+          "desc": "## S0-05 \u2013 CI/CD GitHub Actions\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 3 |\n\n### Description\nMettre en place les pipelines CI/CD avec GitHub Actions pour le lint, les tests, le d\u00e9ploiement frontend et backend.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] ci.yml avec lint et tests automatiques\n- [ ] D\u00e9ploiement frontend vers Vercel\n- [ ] D\u00e9ploiement backend vers Railway\n- [ ] Badge status dans le README\n- [ ] npm audit int\u00e9gr\u00e9 dans la CI",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "ci.yml avec lint et tests automatiques",
+                "D\u00e9ploiement frontend vers Vercel",
+                "D\u00e9ploiement backend vers Railway",
+                "Badge status dans le README",
+                "npm audit int\u00e9gr\u00e9 dans la CI"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-06][5 SP] Maquettes UI/UX Figma",
+          "desc": "## S0-06 \u2013 Maquettes UI/UX Figma\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Design |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er le design system complet et les maquettes UI/UX pour les \u00e9crans principaux de MYTHOS.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Design system d\u00e9fini (couleurs, typographies, composants)\n- [ ] Maquettes desktop pour 10 \u00e9crans\n- [ ] Maquettes mobile pour 10 \u00e9crans\n- [ ] Lien Figma partag\u00e9 et accessible \u00e0 l\u2019\u00e9quipe",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Design system d\u00e9fini (couleurs, typographies, composants)",
+                "Maquettes desktop pour 10 \u00e9crans",
+                "Maquettes mobile pour 10 \u00e9crans",
+                "Lien Figma partag\u00e9 et accessible \u00e0 l\u2019\u00e9quipe"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S0-07][1 SP] Configurer GitHub Projects",
+          "desc": "## S0-07 \u2013 Configurer GitHub Projects\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | PM |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 0 \u2013 Cadrage & Setup (Sem 1-2) |\n| **Story Points** | 1 |\n\n### Description\nConfigurer le board GitHub Projects pour le suivi Kanban du projet MYTHOS.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Colonnes Kanban configur\u00e9es (Backlog, To Do, In Progress, Review, Done)\n- [ ] Labels cr\u00e9\u00e9s (Frontend, Backend, IA, DevOps, Design, Game, Tests)\n- [ ] Milestones cr\u00e9\u00e9s par sprint\n- [ ] Tous les tickets import\u00e9s",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Colonnes Kanban configur\u00e9es (Backlog, To Do, In Progress, Review, Done)",
+                "Labels cr\u00e9\u00e9s (Frontend, Backend, IA, DevOps, Design, Game, Tests)",
+                "Milestones cr\u00e9\u00e9s par sprint",
+                "Tous les tickets import\u00e9s"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\udd27 Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) [29 SP]",
+      "cards": [
+        {
+          "name": "[S1-01][5 SP] Mod\u00e8le donn\u00e9es complet Prisma",
+          "desc": "## S1-01 \u2013 Mod\u00e8le donn\u00e9es complet Prisma\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 5 |\n\n### Description\nD\u00e9finir le sch\u00e9ma de donn\u00e9es complet Prisma pour l\u2019ensemble du projet MYTHOS.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Sch\u00e9ma Prisma complet avec toutes les entit\u00e9s\n- [ ] Enums d\u00e9finis (r\u00f4les, statuts, etc.)\n- [ ] Migration initiale ex\u00e9cut\u00e9e avec succ\u00e8s\n- [ ] Seed avec donn\u00e9es admin + users + packs\n- [ ] Prisma Studio fonctionnel et v\u00e9rifiable",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Sch\u00e9ma Prisma complet avec toutes les entit\u00e9s",
+                "Enums d\u00e9finis (r\u00f4les, statuts, etc.)",
+                "Migration initiale ex\u00e9cut\u00e9e avec succ\u00e8s",
+                "Seed avec donn\u00e9es admin + users + packs",
+                "Prisma Studio fonctionnel et v\u00e9rifiable"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-02][5 SP] Auth Register + Login JWT",
+          "desc": "## S1-02 \u2013 Auth Register + Login JWT\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter le syst\u00e8me d\u2019authentification complet avec inscription, connexion et protection par JWT.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] POST /auth/register fonctionnel\n- [ ] POST /auth/login fonctionnel\n- [ ] Hashage bcrypt des mots de passe\n- [ ] JWT avec expiration 24h\n- [ ] JwtAuthGuard impl\u00e9ment\u00e9\n- [ ] Validation DTO sur tous les endpoints\n- [ ] Tests unitaires avec couverture >80%",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "POST /auth/register fonctionnel",
+                "POST /auth/login fonctionnel",
+                "Hashage bcrypt des mots de passe",
+                "JWT avec expiration 24h",
+                "JwtAuthGuard impl\u00e9ment\u00e9",
+                "Validation DTO sur tous les endpoints",
+                "Tests unitaires avec couverture >80%"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-03][3 SP] Pages Auth frontend",
+          "desc": "## S1-03 \u2013 Pages Auth frontend\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 3 |\n\n### Description\nCr\u00e9er les pages d\u2019authentification frontend (inscription et connexion) avec gestion du token.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Page /register fonctionnelle\n- [ ] Page /login fonctionnelle\n- [ ] Validation c\u00f4t\u00e9 client\n- [ ] Token stock\u00e9 dans Zustand + localStorage\n- [ ] Redirection apr\u00e8s authentification",
+          "labels": ["Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Page /register fonctionnelle",
+                "Page /login fonctionnelle",
+                "Validation c\u00f4t\u00e9 client",
+                "Token stock\u00e9 dans Zustand + localStorage",
+                "Redirection apr\u00e8s authentification"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-04][3 SP] API CRUD Sc\u00e9narios",
+          "desc": "## S1-04 \u2013 API CRUD Sc\u00e9narios\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 3 |\n\n### Description\nImpl\u00e9menter les endpoints CRUD pour la gestion des sc\u00e9narios de jeu.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] GET /scenarios avec liste compl\u00e8te\n- [ ] GET /scenarios/:slug avec d\u00e9tail\n- [ ] Pagination fonctionnelle\n- [ ] Tests unitaires",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "GET /scenarios avec liste compl\u00e8te",
+                "GET /scenarios/:slug avec d\u00e9tail",
+                "Pagination fonctionnelle",
+                "Tests unitaires"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-05][5 SP] POC AI Service Anthropic",
+          "desc": "## S1-05 \u2013 POC AI Service Anthropic\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend + IA |\n| **Priorit\u00e9** | Must + Spike |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er le service d\u2019int\u00e9gration IA avec Anthropic pour la g\u00e9n\u00e9ration de narration. Proof of Concept pour valider l\u2019approche.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] AiService cr\u00e9\u00e9 et injectable\n- [ ] M\u00e9thode generateNarration() impl\u00e9ment\u00e9e\n- [ ] Prompt dynamique bas\u00e9 sur le contexte de jeu\n- [ ] Parsing JSON de la r\u00e9ponse IA\n- [ ] M\u00e9canisme de retry en cas d\u2019erreur\n- [ ] Support dual model (rapide + puissant)\n- [ ] 3 tours g\u00e9n\u00e9r\u00e9s de mani\u00e8re coh\u00e9rente",
+          "labels": ["Backend", "IA"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "AiService cr\u00e9\u00e9 et injectable",
+                "M\u00e9thode generateNarration() impl\u00e9ment\u00e9e",
+                "Prompt dynamique bas\u00e9 sur le contexte de jeu",
+                "Parsing JSON de la r\u00e9ponse IA",
+                "M\u00e9canisme de retry en cas d\u2019erreur",
+                "Support dual model (rapide + puissant)",
+                "3 tours g\u00e9n\u00e9r\u00e9s de mani\u00e8re coh\u00e9rente"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-06][3 SP] POC page test IA frontend",
+          "desc": "## S1-06 \u2013 POC page test IA frontend\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend + IA |\n| **Priorit\u00e9** | Must + Spike |\n| **Assign\u00e9** | Youri, Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 3 |\n\n### Description\nCr\u00e9er une page de test frontend pour valider l\u2019int\u00e9gration IA avec streaming en temps r\u00e9el.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Page /poc-ai accessible\n- [ ] S\u00e9lection de sc\u00e9nario fonctionnelle\n- [ ] Bouton g\u00e9n\u00e9rer avec appel API\n- [ ] Affichage streaming de la r\u00e9ponse IA\n- [ ] Affichage des options de choix\n- [ ] Temps de r\u00e9ponse affich\u00e9\n- [ ] Possibilit\u00e9 de passer au tour suivant",
+          "labels": ["Frontend", "IA"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Page /poc-ai accessible",
+                "S\u00e9lection de sc\u00e9nario fonctionnelle",
+                "Bouton g\u00e9n\u00e9rer avec appel API",
+                "Affichage streaming de la r\u00e9ponse IA",
+                "Affichage des options de choix",
+                "Temps de r\u00e9ponse affich\u00e9",
+                "Possibilit\u00e9 de passer au tour suivant"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S1-07][5 SP] Sc\u00e9nario Packs TRIBUNAL+DEEP JSON",
+          "desc": "## S1-07 \u2013 Sc\u00e9nario Packs TRIBUNAL+DEEP JSON\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Game |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Kays, Samy |\n| **Sprint** | Sprint 1 \u2013 Fondations + POC IA (Sem 3-4) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er les fichiers JSON de d\u00e9finition des sc\u00e9narios TRIBUNAL et DEEP avec toutes les r\u00e8gles, r\u00f4les et m\u00e9caniques.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] tribunal.json avec 5 r\u00f4les et 5 rounds\n- [ ] deep.json avec 3 r\u00f4les, 4 ressources et 8 rounds\n- [ ] 3 parties de test jou\u00e9es par sc\u00e9nario\n- [ ] JSON Schema valide pour chaque pack",
+          "labels": ["Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "tribunal.json avec 5 r\u00f4les et 5 rounds",
+                "deep.json avec 3 r\u00f4les, 4 ressources et 8 rounds",
+                "3 parties de test jou\u00e9es par sc\u00e9nario",
+                "JSON Schema valide pour chaque pack"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\u2699\ufe0f Sprint 2 \u2013 Game Engine Core (Sem 5-6) [37 SP]",
+      "cards": [
+        {
+          "name": "[S2-01][3 SP] Sc\u00e9nario Pack Loader",
+          "desc": "## S2-01 \u2013 Sc\u00e9nario Pack Loader\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 3 |\n\n### Description\nImpl\u00e9menter le service de chargement et validation des packs de sc\u00e9narios JSON.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] ScenarioPackLoaderService cr\u00e9\u00e9\n- [ ] M\u00e9thode load() fonctionnelle\n- [ ] Validation TypeScript des packs charg\u00e9s\n- [ ] Erreur explicite si pack invalide\n- [ ] Tests unitaires",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "ScenarioPackLoaderService cr\u00e9\u00e9",
+                "M\u00e9thode load() fonctionnelle",
+                "Validation TypeScript des packs charg\u00e9s",
+                "Erreur explicite si pack invalide",
+                "Tests unitaires"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-02][5 SP] Game State Manager",
+          "desc": "## S2-02 \u2013 Game State Manager\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter le gestionnaire d\u2019\u00e9tat de jeu avec persistance Redis.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] M\u00e9thodes create/get/update/addToHistory/recordAction impl\u00e9ment\u00e9es\n- [ ] Stockage Redis avec TTL de 2h\n- [ ] Tests unitaires complets",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "M\u00e9thodes create/get/update/addToHistory/recordAction impl\u00e9ment\u00e9es",
+                "Stockage Redis avec TTL de 2h",
+                "Tests unitaires complets"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-03][3 SP] Role Manager",
+          "desc": "## S2-03 \u2013 Role Manager\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 3 |\n\n### Description\nImpl\u00e9menter le syst\u00e8me d\u2019attribution des r\u00f4les aux joueurs.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] M\u00e9thode assignRoles() impl\u00e9ment\u00e9e\n- [ ] Support des modes fixed et fill\n- [ ] Algorithme Fisher-Yates pour le m\u00e9lange\n- [ ] Attribution role + secret_info \u00e0 chaque joueur\n- [ ] Tests avec configurations de 4 \u00e0 8 joueurs",
+          "labels": ["Backend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "M\u00e9thode assignRoles() impl\u00e9ment\u00e9e",
+                "Support des modes fixed et fill",
+                "Algorithme Fisher-Yates pour le m\u00e9lange",
+                "Attribution role + secret_info \u00e0 chaque joueur",
+                "Tests avec configurations de 4 \u00e0 8 joueurs"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-04][5 SP] Choice Engine",
+          "desc": "## S2-04 \u2013 Choice Engine\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter le moteur de gestion des choix des joueurs avec diff\u00e9rents modes de d\u00e9cision.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] M\u00e9thodes start/submit/getResults impl\u00e9ment\u00e9es\n- [ ] Mode individuel fonctionnel\n- [ ] Mode vote fonctionnel\n- [ ] Mode d\u00e9sign\u00e9 fonctionnel\n- [ ] Gestion du timeout\n- [ ] Tests unitaires pour chaque mode",
+          "labels": ["Backend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "M\u00e9thodes start/submit/getResults impl\u00e9ment\u00e9es",
+                "Mode individuel fonctionnel",
+                "Mode vote fonctionnel",
+                "Mode d\u00e9sign\u00e9 fonctionnel",
+                "Gestion du timeout",
+                "Tests unitaires pour chaque mode"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-05][3 SP] Resource Manager",
+          "desc": "## S2-05 \u2013 Resource Manager\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 3 |\n\n### Description\nImpl\u00e9menter le gestionnaire de ressources pour les jauges de jeu (utilis\u00e9 principalement dans DEEP).\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] M\u00e9thodes init/applyDecay/modify/checkEnd impl\u00e9ment\u00e9es\n- [ ] Tests avec ressources DEEP (O2, \u00e9nergie, coque)",
+          "labels": ["Backend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "M\u00e9thodes init/applyDecay/modify/checkEnd impl\u00e9ment\u00e9es",
+                "Tests avec ressources DEEP (O2, \u00e9nergie, coque)"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-06][13 SP] Game Loop Manager",
+          "desc": "## S2-06 \u2013 Game Loop Manager\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Kays |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 13 |\n\n### Description\nImpl\u00e9menter le gestionnaire principal de la boucle de jeu orchestrant les 6 phases de chaque tour.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] 6 phases du tour impl\u00e9ment\u00e9es et orchestr\u00e9es\n- [ ] Transitions automatiques entre phases\n- [ ] Support des phases_override depuis le pack sc\u00e9nario\n- [ ] Test d\u2019int\u00e9gration TRIBUNAL complet sur 5 tours",
+          "labels": ["Backend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "6 phases du tour impl\u00e9ment\u00e9es et orchestr\u00e9es",
+                "Transitions automatiques entre phases",
+                "Support des phases_override depuis le pack sc\u00e9nario",
+                "Test d\u2019int\u00e9gration TRIBUNAL complet sur 5 tours"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S2-07][5 SP] Tests int\u00e9gration Game Engine",
+          "desc": "## S2-07 \u2013 Tests int\u00e9gration Game Engine\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Tests |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 2 \u2013 Game Engine Core (Sem 5-6) |\n| **Story Points** | 5 |\n\n### Description\nSuite compl\u00e8te de tests d\u2019int\u00e9gration pour le moteur de jeu.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Test TRIBUNAL 4 joueurs bout en bout\n- [ ] Test DEEP avec jauges de ressources\n- [ ] Test d\u00e9connexion joueur en cours de partie\n- [ ] Test timeout des phases\n- [ ] Couverture de code >70%\n- [ ] CI avec mock IA fonctionnel",
+          "labels": ["Tests"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Test TRIBUNAL 4 joueurs bout en bout",
+                "Test DEEP avec jauges de ressources",
+                "Test d\u00e9connexion joueur en cours de partie",
+                "Test timeout des phases",
+                "Couverture de code >70%",
+                "CI avec mock IA fonctionnel"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83c\udf10 Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) [37 SP]",
+      "cards": [
+        {
+          "name": "[S3-01][5 SP] WebSocket Gateway NestJS",
+          "desc": "## S3-01 \u2013 WebSocket Gateway NestJS\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter la gateway WebSocket NestJS pour la communication temps r\u00e9el entre joueurs.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] GameGateway cr\u00e9\u00e9 et configur\u00e9\n- [ ] Authentification JWT dans handleConnection\n- [ ] \u00c9v\u00e9nements join/leave/start impl\u00e9ment\u00e9s\n- [ ] Gestion des rooms par session\n- [ ] D\u00e9connexion et reconnexion g\u00e9r\u00e9es\n- [ ] Logs de connexion/d\u00e9connexion",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "GameGateway cr\u00e9\u00e9 et configur\u00e9",
+                "Authentification JWT dans handleConnection",
+                "\u00c9v\u00e9nements join/leave/start impl\u00e9ment\u00e9s",
+                "Gestion des rooms par session",
+                "D\u00e9connexion et reconnexion g\u00e9r\u00e9es",
+                "Logs de connexion/d\u00e9connexion"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-02][5 SP] Session Manager lobby",
+          "desc": "## S3-02 \u2013 Session Manager lobby\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter le gestionnaire de sessions avec cr\u00e9ation de lobby, rejoindre une session et lancement de partie.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] POST /sessions pour cr\u00e9er une session\n- [ ] GET /sessions/:code pour r\u00e9cup\u00e9rer le d\u00e9tail\n- [ ] POST /sessions/:code/join pour rejoindre\n- [ ] \u00c9v\u00e9nements WebSocket lobby (joueur rejoint, quitte)\n- [ ] Chat lobby fonctionnel\n- [ ] L\u2019h\u00f4te peut lancer la partie",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "POST /sessions pour cr\u00e9er une session",
+                "GET /sessions/:code pour r\u00e9cup\u00e9rer le d\u00e9tail",
+                "POST /sessions/:code/join pour rejoindre",
+                "\u00c9v\u00e9nements WebSocket lobby (joueur rejoint, quitte)",
+                "Chat lobby fonctionnel",
+                "L\u2019h\u00f4te peut lancer la partie"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-03][8 SP] Game Loop \u2192 WebSocket",
+          "desc": "## S3-03 \u2013 Game Loop \u2192 WebSocket\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Kays |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 8 |\n\n### Description\nConnecter le Game Loop Manager aux WebSockets pour la communication en temps r\u00e9el des \u00e9v\u00e9nements de jeu.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Broadcast narration/options/private aux joueurs\n- [ ] R\u00e9ception player:choice depuis les clients\n- [ ] \u00c9mission des r\u00e9sultats de r\u00e9solution\n- [ ] \u00c9v\u00e9nement resources_update en temps r\u00e9el\n- [ ] timer:tick synchronis\u00e9 avec les clients\n- [ ] phase_change broadcast\u00e9\n- [ ] \u00c9v\u00e9nement finale en fin de partie\n- [ ] Test avec 2 clients simultan\u00e9s",
+          "labels": ["Backend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Broadcast narration/options/private aux joueurs",
+                "R\u00e9ception player:choice depuis les clients",
+                "\u00c9mission des r\u00e9sultats de r\u00e9solution",
+                "\u00c9v\u00e9nement resources_update en temps r\u00e9el",
+                "timer:tick synchronis\u00e9 avec les clients",
+                "phase_change broadcast\u00e9",
+                "\u00c9v\u00e9nement finale en fin de partie",
+                "Test avec 2 clients simultan\u00e9s"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-04][3 SP] Page catalogue sc\u00e9narios",
+          "desc": "## S3-04 \u2013 Page catalogue sc\u00e9narios\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 3 |\n\n### Description\nCr\u00e9er la page de catalogue des sc\u00e9narios disponibles avec d\u00e9tail et cr\u00e9ation de session.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Cards sc\u00e9narios affich\u00e9es en grille\n- [ ] Page d\u00e9tail /scenarios/:slug\n- [ ] Bouton cr\u00e9er une session depuis le d\u00e9tail\n- [ ] Design responsive\n- [ ] Conforme aux maquettes Figma",
+          "labels": ["Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Cards sc\u00e9narios affich\u00e9es en grille",
+                "Page d\u00e9tail /scenarios/:slug",
+                "Bouton cr\u00e9er une session depuis le d\u00e9tail",
+                "Design responsive",
+                "Conforme aux maquettes Figma"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-05][5 SP] Page lobby",
+          "desc": "## S3-05 \u2013 Page lobby\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er la page lobby avec connexion WebSocket, liste des joueurs en temps r\u00e9el et chat.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Page /session/:code fonctionnelle\n- [ ] Connexion WebSocket automatique\n- [ ] Liste des joueurs mise \u00e0 jour en temps r\u00e9el\n- [ ] Code de session copiable\n- [ ] Chat lobby fonctionnel\n- [ ] Bouton lancer visible uniquement pour l\u2019h\u00f4te",
+          "labels": ["Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Page /session/:code fonctionnelle",
+                "Connexion WebSocket automatique",
+                "Liste des joueurs mise \u00e0 jour en temps r\u00e9el",
+                "Code de session copiable",
+                "Chat lobby fonctionnel",
+                "Bouton lancer visible uniquement pour l\u2019h\u00f4te"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-06][8 SP] Game UI narration+choix+discussion",
+          "desc": "## S3-06 \u2013 Game UI narration+choix+discussion\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 8 |\n\n### Description\nImpl\u00e9menter l\u2019interface de jeu compl\u00e8te avec panneaux de narration, choix, discussion et informations priv\u00e9es.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] NarrationPanel avec affichage streaming\n- [ ] ChoicePanel avec timer visuel\n- [ ] DiscussionPanel avec chat en temps r\u00e9el\n- [ ] PrivateInfoPanel pour les informations secr\u00e8tes du r\u00f4le\n- [ ] ProgressBar de la partie\n- [ ] PhaseIndicator affichant la phase courante\n- [ ] Animations et transitions entre phases\n- [ ] \u00c9tat g\u00e9r\u00e9 par Zustand + WebSocket\n- [ ] Interface responsive",
+          "labels": ["Frontend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "NarrationPanel avec affichage streaming",
+                "ChoicePanel avec timer visuel",
+                "DiscussionPanel avec chat en temps r\u00e9el",
+                "PrivateInfoPanel pour les informations secr\u00e8tes du r\u00f4le",
+                "ProgressBar de la partie",
+                "PhaseIndicator affichant la phase courante",
+                "Animations et transitions entre phases",
+                "\u00c9tat g\u00e9r\u00e9 par Zustand + WebSocket",
+                "Interface responsive"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S3-07][3 SP] Test E2E TRIBUNAL",
+          "desc": "## S3-07 \u2013 Test E2E TRIBUNAL\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Tests |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Sprint 3 \u2013 Multijoueur + TRIBUNAL (Sem 7-8) |\n| **Story Points** | 3 |\n\n### Description\nTest end-to-end complet du sc\u00e9nario TRIBUNAL avec 4 joueurs simultan\u00e9s.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] 4 navigateurs connect\u00e9s simultan\u00e9ment\n- [ ] 5 tours jou\u00e9s compl\u00e8tement\n- [ ] R\u00f4les secrets correctement distribu\u00e9s\n- [ ] \u00c9cran de fin affich\u00e9 correctement\n- [ ] 0 erreur JavaScript dans la console\n- [ ] R\u00e9ponse IA <5 secondes",
+          "labels": ["Tests"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "4 navigateurs connect\u00e9s simultan\u00e9ment",
+                "5 tours jou\u00e9s compl\u00e8tement",
+                "R\u00f4les secrets correctement distribu\u00e9s",
+                "\u00c9cran de fin affich\u00e9 correctement",
+                "0 erreur JavaScript dans la console",
+                "R\u00e9ponse IA <5 secondes"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83c\udfae Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) [29 SP]",
+      "cards": [
+        {
+          "name": "[S4-01][3 SP] Composant jauges ressources",
+          "desc": "## S4-01 \u2013 Composant jauges ressources\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 3 |\n\n### Description\nCr\u00e9er le composant d\u2019affichage des jauges de ressources avec code couleur et animations.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Composant ResourceGauges cr\u00e9\u00e9\n- [ ] Code couleur vert/orange/rouge selon le niveau\n- [ ] Labels accessibles (aria-label)\n- [ ] Animation de transition lors des changements\n- [ ] Mise \u00e0 jour via WS resources_update\n- [ ] Affichage conditionnel (uniquement pour sc\u00e9narios avec ressources)\n- [ ] Interface responsive",
+          "labels": ["Frontend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Composant ResourceGauges cr\u00e9\u00e9",
+                "Code couleur vert/orange/rouge selon le niveau",
+                "Labels accessibles (aria-label)",
+                "Animation de transition lors des changements",
+                "Mise \u00e0 jour via WS resources_update",
+                "Affichage conditionnel (uniquement pour sc\u00e9narios avec ressources)",
+                "Interface responsive"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-02][5 SP] \u00c9cran fin de partie",
+          "desc": "## S4-02 \u2013 \u00c9cran fin de partie\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er l\u2019\u00e9cran de fin de partie avec r\u00e9v\u00e9lation des r\u00f4les, r\u00e9sum\u00e9 et options de replay.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Narration climax affich\u00e9e\n- [ ] Tableau des r\u00f4les r\u00e9v\u00e9l\u00e9s\n- [ ] Timeline r\u00e9sum\u00e9 de la partie\n- [ ] R\u00e9sultat final (victoire/d\u00e9faite)\n- [ ] Jauges finales pour DEEP\n- [ ] Bouton rejouer\n- [ ] Bouton nouveau sc\u00e9nario\n- [ ] Animations de r\u00e9v\u00e9lation",
+          "labels": ["Frontend", "Game"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Narration climax affich\u00e9e",
+                "Tableau des r\u00f4les r\u00e9v\u00e9l\u00e9s",
+                "Timeline r\u00e9sum\u00e9 de la partie",
+                "R\u00e9sultat final (victoire/d\u00e9faite)",
+                "Jauges finales pour DEEP",
+                "Bouton rejouer",
+                "Bouton nouveau sc\u00e9nario",
+                "Animations de r\u00e9v\u00e9lation"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-03][5 SP] Streaming IA progressif",
+          "desc": "## S4-03 \u2013 Streaming IA progressif\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend + IA |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter le streaming progressif des r\u00e9ponses IA pour une meilleure exp\u00e9rience utilisateur.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Option stream:true dans l\u2019appel Anthropic\n- [ ] \u00c9mission WS narration_chunk progressive\n- [ ] Frontend concat\u00e8ne les chunks en temps r\u00e9el\n- [ ] JSON pars\u00e9 \u00e0 la fin du stream\n- [ ] Fallback en cas d\u2019erreur de streaming\n- [ ] Premi\u00e8re ligne affich\u00e9e en <1 seconde",
+          "labels": ["Backend", "IA"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Option stream:true dans l\u2019appel Anthropic",
+                "\u00c9mission WS narration_chunk progressive",
+                "Frontend concat\u00e8ne les chunks en temps r\u00e9el",
+                "JSON pars\u00e9 \u00e0 la fin du stream",
+                "Fallback en cas d\u2019erreur de streaming",
+                "Premi\u00e8re ligne affich\u00e9e en <1 seconde"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-04][3 SP] Test E2E DEEP",
+          "desc": "## S4-04 \u2013 Test E2E DEEP\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Tests |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 3 |\n\n### Description\nTest end-to-end complet du sc\u00e9nario DEEP avec gestion des ressources.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Partie DEEP jou\u00e9e de bout en bout\n- [ ] Jauges de ressources fonctionnelles\n- [ ] Test victoire (toutes ressources OK)\n- [ ] Test d\u00e9faite (une ressource \u00e0 z\u00e9ro)\n- [ ] \u00c9cran de fin coh\u00e9rent avec le r\u00e9sultat",
+          "labels": ["Tests"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Partie DEEP jou\u00e9e de bout en bout",
+                "Jauges de ressources fonctionnelles",
+                "Test victoire (toutes ressources OK)",
+                "Test d\u00e9faite (une ressource \u00e0 z\u00e9ro)",
+                "\u00c9cran de fin coh\u00e9rent avec le r\u00e9sultat"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-05][3 SP] Historique narratif timeline",
+          "desc": "## S4-05 \u2013 Historique narratif timeline\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 3 |\n\n### Description\nCr\u00e9er le composant d\u2019historique narratif permettant de revoir les tours pr\u00e9c\u00e9dents.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Bouton d\u2019acc\u00e8s \u00e0 l\u2019historique visible\n- [ ] Panel affichant tous les tours pass\u00e9s\n- [ ] R\u00e9sum\u00e9 narration + choix par tour\n- [ ] Panel scrollable\n- [ ] Fermeture du panel fonctionnelle",
+          "labels": ["Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Bouton d\u2019acc\u00e8s \u00e0 l\u2019historique visible",
+                "Panel affichant tous les tours pass\u00e9s",
+                "R\u00e9sum\u00e9 narration + choix par tour",
+                "Panel scrollable",
+                "Fermeture du panel fonctionnelle"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-06][5 SP] Polish UI responsive+animations",
+          "desc": "## S4-06 \u2013 Polish UI responsive+animations\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Youri, Yassir |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 5 |\n\n### Description\nPolir l\u2019interface utilisateur avec responsive complet et animations fluides.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Mobile 320px et plus support\u00e9\n- [ ] Transitions fluides entre les phases\n- [ ] \u00c9tat de chargement IA visible\n- [ ] Animation du timer\n- [ ] \u00c9tats d\u2019erreur g\u00e9r\u00e9s visuellement\n- [ ] Conforme aux maquettes Figma",
+          "labels": ["Frontend", "Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Mobile 320px et plus support\u00e9",
+                "Transitions fluides entre les phases",
+                "\u00c9tat de chargement IA visible",
+                "Animation du timer",
+                "\u00c9tats d\u2019erreur g\u00e9r\u00e9s visuellement",
+                "Conforme aux maquettes Figma"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S4-07][5 SP] Reconnexion joueur",
+          "desc": "## S4-07 \u2013 Reconnexion joueur\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 4 \u2013 DEEP + UI Complete (Sem 9-10) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter la m\u00e9canique de reconnexion d\u2019un joueur d\u00e9connect\u00e9 en cours de partie.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] \u00c9tat disconnected g\u00e9r\u00e9 pour le joueur\n- [ ] La partie continue sans le joueur d\u00e9connect\u00e9\n- [ ] Reconnexion restaure la room et le state complet\n- [ ] Interface mise \u00e0 jour pour les autres joueurs\n- [ ] Timeout de 2 minutes avant exclusion\n- [ ] Message visible pour les autres joueurs",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "\u00c9tat disconnected g\u00e9r\u00e9 pour le joueur",
+                "La partie continue sans le joueur d\u00e9connect\u00e9",
+                "Reconnexion restaure la room et le state complet",
+                "Interface mise \u00e0 jour pour les autres joueurs",
+                "Timeout de 2 minutes avant exclusion",
+                "Message visible pour les autres joueurs"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83d\ude80 Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) [26 SP]",
+      "cards": [
+        {
+          "name": "[S5-01][5 SP] API Admin stats+gestion",
+          "desc": "## S5-01 \u2013 API Admin stats+gestion\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Samy |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 5 |\n\n### Description\nImpl\u00e9menter les endpoints API d\u2019administration pour les statistiques et la gestion des utilisateurs.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] GET /admin/stats fonctionnel\n- [ ] GET /admin/sessions avec liste compl\u00e8te\n- [ ] GET /admin/users avec liste compl\u00e8te\n- [ ] PATCH /admin/users/:id/ban fonctionnel\n- [ ] AdminGuard prot\u00e9geant tous les endpoints\n- [ ] Tests unitaires",
+          "labels": ["Backend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "GET /admin/stats fonctionnel",
+                "GET /admin/sessions avec liste compl\u00e8te",
+                "GET /admin/users avec liste compl\u00e8te",
+                "PATCH /admin/users/:id/ban fonctionnel",
+                "AdminGuard prot\u00e9geant tous les endpoints",
+                "Tests unitaires"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-02][5 SP] Panel admin frontend",
+          "desc": "## S5-02 \u2013 Panel admin frontend\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Samy, Youri |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 5 |\n\n### Description\nCr\u00e9er le panneau d\u2019administration frontend avec dashboard, gestion des sessions et des utilisateurs.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Route /admin prot\u00e9g\u00e9e par r\u00f4le admin\n- [ ] Dashboard avec statistiques globales\n- [ ] Tableau des sessions avec filtres\n- [ ] Tableau des utilisateurs avec actions (ban)\n- [ ] Interface responsive",
+          "labels": ["Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Route /admin prot\u00e9g\u00e9e par r\u00f4le admin",
+                "Dashboard avec statistiques globales",
+                "Tableau des sessions avec filtres",
+                "Tableau des utilisateurs avec actions (ban)",
+                "Interface responsive"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-03][5 SP] Audit accessibilit\u00e9 WCAG",
+          "desc": "## S5-03 \u2013 Audit accessibilit\u00e9 WCAG\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Accessibilit\u00e9 |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir, Youri |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 5 |\n\n### Description\nR\u00e9aliser un audit d\u2019accessibilit\u00e9 complet WCAG et corriger les probl\u00e8mes identifi\u00e9s.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Score Lighthouse accessibilit\u00e9 >90\n- [ ] WAVE : 0 erreur\n- [ ] Navigation au clavier compl\u00e8te\n- [ ] Compatible VoiceOver\n- [ ] Contrastes conformes (ratio 4.5:1 minimum)\n- [ ] Attributs ARIA corrects sur tous les composants\n- [ ] Timers prolongeables pour les joueurs en situation de handicap\n- [ ] Rapport PDF d\u2019audit g\u00e9n\u00e9r\u00e9",
+          "labels": ["Frontend", "Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Score Lighthouse accessibilit\u00e9 >90",
+                "WAVE : 0 erreur",
+                "Navigation au clavier compl\u00e8te",
+                "Compatible VoiceOver",
+                "Contrastes conformes (ratio 4.5:1 minimum)",
+                "Attributs ARIA corrects sur tous les composants",
+                "Timers prolongeables pour les joueurs en situation de handicap",
+                "Rapport PDF d\u2019audit g\u00e9n\u00e9r\u00e9"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-04][3 SP] D\u00e9ploiement production",
+          "desc": "## S5-04 \u2013 D\u00e9ploiement production\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 3 |\n\n### Description\nD\u00e9ployer l\u2019application compl\u00e8te en production avec tous les services.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Frontend d\u00e9ploy\u00e9 sur Vercel\n- [ ] Backend d\u00e9ploy\u00e9 sur Railway\n- [ ] PostgreSQL en production\n- [ ] Redis en production\n- [ ] Variables d\u2019environnement configur\u00e9es\n- [ ] HTTPS actif\n- [ ] Health check fonctionnel\n- [ ] CORS correctement configur\u00e9\n- [ ] Test E2E pass\u00e9 sur l\u2019environnement de production",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Frontend d\u00e9ploy\u00e9 sur Vercel",
+                "Backend d\u00e9ploy\u00e9 sur Railway",
+                "PostgreSQL en production",
+                "Redis en production",
+                "Variables d\u2019environnement configur\u00e9es",
+                "HTTPS actif",
+                "Health check fonctionnel",
+                "CORS correctement configur\u00e9",
+                "Test E2E pass\u00e9 sur l\u2019environnement de production"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-05][2 SP] Monitoring + health check",
+          "desc": "## S5-05 \u2013 Monitoring + health check\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Infra |\n| **Priorit\u00e9** | Should |\n| **Assign\u00e9** | Yassir |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 2 |\n\n### Description\nMettre en place le monitoring de production avec alertes et dashboards.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] UptimeRobot configur\u00e9 pour le frontend et le backend\n- [ ] Alertes Discord en cas de downtime\n- [ ] Logs structur\u00e9s en JSON\n- [ ] Dashboard Anthropic pour le suivi des co\u00fbts IA\n- [ ] M\u00e9triques sessions/IA collect\u00e9es",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "UptimeRobot configur\u00e9 pour le frontend et le backend",
+                "Alertes Discord en cas de downtime",
+                "Logs structur\u00e9s en JSON",
+                "Dashboard Anthropic pour le suivi des co\u00fbts IA",
+                "M\u00e9triques sessions/IA collect\u00e9es"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-06][5 SP] Tests finaux couverture",
+          "desc": "## S5-06 \u2013 Tests finaux couverture\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Tests |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 5 |\n\n### Description\nAtteindre les objectifs de couverture de tests et s\u2019assurer que tous les flux critiques sont couverts.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Couverture backend >60%\n- [ ] Couverture frontend >40%\n- [ ] Tests E2E sur les flux complets\n- [ ] CI enti\u00e8rement verte\n- [ ] Rapport de couverture g\u00e9n\u00e9r\u00e9",
+          "labels": ["Tests"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Couverture backend >60%",
+                "Couverture frontend >40%",
+                "Tests E2E sur les flux complets",
+                "CI enti\u00e8rement verte",
+                "Rapport de couverture g\u00e9n\u00e9r\u00e9"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[S5-07][1 SP] Mesurer \u00e9co-index",
+          "desc": "## S5-07 \u2013 Mesurer \u00e9co-index\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Green |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir |\n| **Sprint** | Sprint 5 \u2013 Admin + Accessibilit\u00e9 + Deploy (Sem 11-12) |\n| **Story Points** | 1 |\n\n### Description\nMesurer l\u2019\u00e9co-index du site avec GreenIT Analysis et g\u00e9n\u00e9rer le rapport pour le RNCP.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] GreenIT Analysis ex\u00e9cut\u00e9 sur 4 pages principales\n- [ ] Score \u00e9co-index >=50 sur chaque page\n- [ ] Poids de chaque page <1 Mo\n- [ ] Rapport g\u00e9n\u00e9r\u00e9 pour le dossier RNCP",
+          "labels": ["DevOps"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "GreenIT Analysis ex\u00e9cut\u00e9 sur 4 pages principales",
+                "Score \u00e9co-index >=50 sur chaque page",
+                "Poids de chaque page <1 Mo",
+                "Rapport g\u00e9n\u00e9r\u00e9 pour le dossier RNCP"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83c\udfc1 Buffer \u2013 Finalisation (Sem 13-14) [15 SP]",
+      "cards": [
+        {
+          "name": "[SB-01][5 SP] Corriger bugs restants",
+          "desc": "## SB-01 \u2013 Corriger bugs restants\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Bugs |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Buffer \u2013 Finalisation (Sem 13-14) |\n| **Story Points** | 5 |\n\n### Description\nCorriger tous les bugs bloquants et majeurs restants avant la livraison finale.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] 0 bug bloquant\n- [ ] 0 bug majeur\n- [ ] Bugs mineurs document\u00e9s dans le backlog\n- [ ] Tests de non-r\u00e9gression ajout\u00e9s",
+          "labels": ["Backend", "Frontend"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "0 bug bloquant",
+                "0 bug majeur",
+                "Bugs mineurs document\u00e9s dans le backlog",
+                "Tests de non-r\u00e9gression ajout\u00e9s"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[SB-02][3 SP] Documentation technique finale",
+          "desc": "## SB-02 \u2013 Documentation technique finale\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Doc |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Buffer \u2013 Finalisation (Sem 13-14) |\n| **Story Points** | 3 |\n\n### Description\nR\u00e9diger et finaliser toute la documentation technique du projet.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] README complet avec guide d\u2019installation et de d\u00e9veloppement\n- [ ] Documentation API et WebSocket\n- [ ] Documentation Scenario Pack (format, cr\u00e9ation)\n- [ ] Cahier des charges v2 finalis\u00e9\n- [ ] Journal de bord Notion complet",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "README complet avec guide d\u2019installation et de d\u00e9veloppement",
+                "Documentation API et WebSocket",
+                "Documentation Scenario Pack (format, cr\u00e9ation)",
+                "Cahier des charges v2 finalis\u00e9",
+                "Journal de bord Notion complet"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[SB-03][2 SP] Annexe retour d\u2019exp\u00e9rience",
+          "desc": "## SB-03 \u2013 Annexe retour d\u2019exp\u00e9rience\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Doc |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (individuel : Kays, Samy, Youri, Yassir) |\n| **Sprint** | Buffer \u2013 Finalisation (Sem 13-14) |\n| **Story Points** | 2 |\n\n### Description\nChaque membre r\u00e9dige son retour d\u2019exp\u00e9rience individuel sur le projet.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Document individuel de 2-3 pages par membre\n- [ ] Analyse des \u00e9carts entre pr\u00e9vu et r\u00e9alis\u00e9\n- [ ] Limites et difficult\u00e9s rencontr\u00e9es\n- [ ] Propositions d\u2019am\u00e9lioration\n- [ ] Bilan personnel",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Document individuel de 2-3 pages par membre",
+                "Analyse des \u00e9carts entre pr\u00e9vu et r\u00e9alis\u00e9",
+                "Limites et difficult\u00e9s rencontr\u00e9es",
+                "Propositions d\u2019am\u00e9lioration",
+                "Bilan personnel"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[SB-04][2 SP] Vid\u00e9o d\u00e9monstration",
+          "desc": "## SB-04 \u2013 Vid\u00e9o d\u00e9monstration\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Livrable |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | Yassir, Kays |\n| **Sprint** | Buffer \u2013 Finalisation (Sem 13-14) |\n| **Story Points** | 2 |\n\n### Description\nProduire la vid\u00e9o de d\u00e9monstration du projet MYTHOS.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Dur\u00e9e de 3 \u00e0 5 minutes\n- [ ] 2 sc\u00e9narios pr\u00e9sent\u00e9s (TRIBUNAL et DEEP)\n- [ ] R\u00e9solution 1080p minimum\n- [ ] Voix off ou sous-titres\n- [ ] Upload\u00e9e sur YouTube\n- [ ] Lien ajout\u00e9 dans le README",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Dur\u00e9e de 3 \u00e0 5 minutes",
+                "2 sc\u00e9narios pr\u00e9sent\u00e9s (TRIBUNAL et DEEP)",
+                "R\u00e9solution 1080p minimum",
+                "Voix off ou sous-titres",
+                "Upload\u00e9e sur YouTube",
+                "Lien ajout\u00e9 dans le README"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "[SB-05][3 SP] Pr\u00e9parer soutenance",
+          "desc": "## SB-05 \u2013 Pr\u00e9parer soutenance\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Soutenance |\n| **Priorit\u00e9** | Must |\n| **Assign\u00e9** | \u00c9quipe (Kays, Samy, Youri, Yassir) |\n| **Sprint** | Buffer \u2013 Finalisation (Sem 13-14) |\n| **Story Points** | 3 |\n\n### Description\nPr\u00e9parer la soutenance orale du projet MYTHOS.\n\n### Crit\u00e8res d\u2019acceptation\n- [ ] Slides pr\u00e9par\u00e9s pour 10 minutes de pr\u00e9sentation\n- [ ] Pr\u00e9paration individuelle sur les comp\u00e9tences C1.1 \u00e0 C1.7\n- [ ] Extraits de livrables int\u00e9gr\u00e9s dans les slides\n- [ ] Screenshots et d\u00e9mos pr\u00e9par\u00e9s\n- [ ] R\u00e9p\u00e9tition chronom\u00e9tr\u00e9e effectu\u00e9e",
+          "labels": ["Design"],
+          "checklists": [
+            {
+              "name": "Crit\u00e8res d\u2019acceptation",
+              "items": [
+                "Slides pr\u00e9par\u00e9s pour 10 minutes de pr\u00e9sentation",
+                "Pr\u00e9paration individuelle sur les comp\u00e9tences C1.1 \u00e0 C1.7",
+                "Extraits de livrables int\u00e9gr\u00e9s dans les slides",
+                "Screenshots et d\u00e9mos pr\u00e9par\u00e9s",
+                "R\u00e9p\u00e9tition chronom\u00e9tr\u00e9e effectu\u00e9e"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "\ud83e\uddf3 Icebox (Post-MVP)",
+      "cards": [
+        {
+          "name": "[ICE-01] Sc\u00e9nario CHRONOS (voyages temporels)",
+          "desc": "## ICE-01 \u2013 Sc\u00e9nario CHRONOS\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Game |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nNouveau sc\u00e9nario bas\u00e9 sur les voyages temporels. Les joueurs doivent naviguer entre diff\u00e9rentes \u00e9poques pour r\u00e9soudre un paradoxe temporel.",
+          "labels": ["Game", "IA"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-02] Sc\u00e9nario MASCARADE (intrigues de cour)",
+          "desc": "## ICE-02 \u2013 Sc\u00e9nario MASCARADE\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Game |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nNouveau sc\u00e9nario d\u2019intrigues de cour. Les joueurs incarnent des courtisans dans un bal masqu\u00e9 o\u00f9 alliances et trahisons fa\u00e7onnent le destin du royaume.",
+          "labels": ["Game", "IA"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-03] Sc\u00e9nario SIGNAL (premier contact)",
+          "desc": "## ICE-03 \u2013 Sc\u00e9nario SIGNAL\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Game |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nNouveau sc\u00e9nario de premier contact extraterrestre. Les joueurs doivent d\u00e9cider collectivement comment r\u00e9pondre \u00e0 un signal d\u2019origine inconnue.",
+          "labels": ["Game", "IA"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-04] Matchmaking automatique",
+          "desc": "## ICE-04 \u2013 Matchmaking automatique\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nSyst\u00e8me de matchmaking automatique permettant aux joueurs de rejoindre une partie sans code de session, en \u00e9tant appari\u00e9s avec d\u2019autres joueurs disponibles.",
+          "labels": ["Backend"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-05] OAuth Google / Discord",
+          "desc": "## ICE-05 \u2013 OAuth Google / Discord\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nAuthentification sociale via Google et Discord pour simplifier l\u2019inscription et la connexion.",
+          "labels": ["Backend"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-06] \u00c9diteur Scenario Packs UGC",
+          "desc": "## ICE-06 \u2013 \u00c9diteur Scenario Packs UGC\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Frontend + Game |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\n\u00c9diteur visuel permettant aux utilisateurs de cr\u00e9er leurs propres Scenario Packs (User Generated Content) avec interface drag-and-drop.",
+          "labels": ["Frontend", "Game"],
+          "checklists": []
+        },
+        {
+          "name": "[ICE-07] Mon\u00e9tisation freemium",
+          "desc": "## ICE-07 \u2013 Mon\u00e9tisation freemium\n\n| Champ | Valeur |\n|---|---|\n| **Epic** | Backend + Frontend |\n| **Priorit\u00e9** | Post-MVP |\n| **Assign\u00e9** | \u00c0 d\u00e9finir |\n| **Sprint** | Icebox (Post-MVP) |\n| **Story Points** | \u00c0 estimer |\n\n### Description\nMod\u00e8le de mon\u00e9tisation freemium avec sc\u00e9narios gratuits et premium, abonnement et achats in-app.",
+          "labels": ["Backend", "Frontend"],
+          "checklists": []
+        }
+      ]
+    }
+  ]
+}
