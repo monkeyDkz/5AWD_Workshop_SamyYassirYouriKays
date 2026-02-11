@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, use } from "react"
 import { useRouter } from "next/navigation"
-import { Bot, Send, ChevronDown, ChevronUp, MessageSquare, Loader2, Play } from "lucide-react"
+import { Bot, Send, ChevronDown, ChevronUp, MessageSquare, Loader2, Play, Trophy, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -26,6 +26,12 @@ interface ChatMessage {
   username: string
   message: string
   timestamp: string
+}
+
+interface GameOverData {
+  result: string
+  epilogue: string
+  scores: Array<{ userId: string; username: string; score: number; role: string; team: string }>
 }
 
 export default function GamePage({ params }: { params: Promise<{ id: string }> }) {
@@ -63,6 +69,9 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
   const [resolutionNarrative, setResolutionNarrative] = useState("")
   const [resolutionEliminations, setResolutionEliminations] = useState<string[]>([])
 
+  // Game over
+  const [gameOver, setGameOver] = useState<GameOverData | null>(null)
+
   // Chat
   const [chatOpen, setChatOpen] = useState(false)
   const [chatMessage, setChatMessage] = useState("")
@@ -84,12 +93,22 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         setPhase(g.currentPhase)
         setRound(g.currentRound)
         if (g.status === "FINISHED") {
-          router.push(`/game/${id}/results`)
+          setGameOver({
+            result: (g as any).stateSnapshot?.status === "FINISHED" ? "Partie terminee" : "Partie terminee",
+            epilogue: "",
+            scores: g.players.map((p) => ({
+              userId: p.userId,
+              username: p.user.username,
+              score: p.score ?? 0,
+              role: p.role ?? "",
+              team: (p as any).team ?? "",
+            })),
+          })
         }
       })
       .catch(() => setError("Partie introuvable"))
       .finally(() => setLoading(false))
-  }, [id, router])
+  }, [id])
 
   // WebSocket connection
   useEffect(() => {
@@ -210,8 +229,12 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     })
 
     // Game over
-    socket.on("game:over", () => {
-      router.push(`/game/${id}/results`)
+    socket.on("game:over", (data: { result: string; epilogue: string; scores: any[] }) => {
+      setGameOver({
+        result: data.result,
+        epilogue: data.epilogue,
+        scores: data.scores ?? [],
+      })
     })
 
     // Chat
@@ -289,6 +312,15 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     setChatMessage("")
   }, [chatMessage, id])
 
+  const handleLeaveGame = useCallback(() => {
+    const socket = getSocket()
+    if (socket) {
+      socket.emit("game:leave", { gameId: id })
+    }
+    disconnectSocket()
+    router.push("/dashboard")
+  }, [id, router])
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
@@ -330,8 +362,19 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
             <span className="text-xs text-primary">Role: {currentPlayer.role}</span>
           )}
         </div>
-        <GamePhaseBar currentPhase={displayPhase} />
-        <GameTimer seconds={game.turnTimeout ?? 60} />
+        {!gameOver && <GamePhaseBar currentPhase={displayPhase} />}
+        <div className="flex items-center gap-3">
+          {!gameOver && <GameTimer seconds={game.turnTimeout ?? 60} />}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-red-400"
+            onClick={handleLeaveGame}
+          >
+            <LogOut className="mr-1 h-3.5 w-3.5" />
+            Quitter
+          </Button>
+        </div>
       </header>
 
       {/* Error banner */}
@@ -358,8 +401,81 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                 </div>
               </div>
 
+              {/* FINISHED state */}
+              {gameOver && (
+                <div className="flex flex-col gap-8">
+                  {/* Result banner */}
+                  <div className="rounded-xl border border-gold/30 bg-amber-500/5 p-6 text-center">
+                    <Trophy className="mx-auto mb-3 h-10 w-10 text-gold" />
+                    <h2 className="font-display text-xl font-bold text-gold">Partie terminee</h2>
+                    <p className="mt-2 text-sm text-foreground/80">{gameOver.result}</p>
+                  </div>
+
+                  {/* Epilogue */}
+                  {gameOver.epilogue && (
+                    <div className="prose prose-invert max-w-none">
+                      {gameOver.epilogue.split("\n\n").map((p, i) => (
+                        <p key={i} className="text-foreground/90 leading-relaxed font-serif text-base">
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Scores table */}
+                  {gameOver.scores.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                      <h3 className="font-display text-sm font-bold text-foreground uppercase tracking-wide">Scores</h3>
+                      <div className="rounded-xl border border-border bg-card/50 overflow-hidden">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-muted-foreground">
+                              <th className="px-4 py-2 text-left font-medium">#</th>
+                              <th className="px-4 py-2 text-left font-medium">Joueur</th>
+                              <th className="px-4 py-2 text-left font-medium">Role</th>
+                              <th className="px-4 py-2 text-right font-medium">Score</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[...gameOver.scores]
+                              .sort((a, b) => b.score - a.score)
+                              .map((s, i) => (
+                                <tr
+                                  key={s.userId}
+                                  className={`border-b border-border/50 ${s.userId === user?.id ? "bg-primary/5" : ""}`}
+                                >
+                                  <td className="px-4 py-2 text-muted-foreground">
+                                    {i === 0 ? <Trophy className="inline h-4 w-4 text-gold" /> : i + 1}
+                                  </td>
+                                  <td className="px-4 py-2 font-medium text-foreground">
+                                    {s.username}
+                                    {s.userId === user?.id && (
+                                      <span className="ml-1 text-xs text-primary">(vous)</span>
+                                    )}
+                                  </td>
+                                  <td className="px-4 py-2 text-muted-foreground">{s.role}</td>
+                                  <td className="px-4 py-2 text-right font-bold text-primary">{s.score}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Leave button */}
+                  <Button
+                    className="self-center"
+                    onClick={handleLeaveGame}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Retour au dashboard
+                  </Button>
+                </div>
+              )}
+
               {/* NARRATION phase */}
-              {displayPhase === "narration" && (
+              {!gameOver && displayPhase === "narration" && (
                 <div className="flex flex-col gap-6">
                   {narrationText ? (
                     <div className="prose prose-invert max-w-none">
@@ -394,7 +510,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
               )}
 
               {/* ACTION phase */}
-              {displayPhase === "action" && (
+              {!gameOver && displayPhase === "action" && (
                 <div className="flex flex-col gap-6">
                   {actionSubmitted ? (
                     <div className="flex flex-col items-center gap-3 py-4">
@@ -491,7 +607,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
               )}
 
               {/* VOTE phase */}
-              {displayPhase === "vote" && (
+              {!gameOver && displayPhase === "vote" && (
                 <div className="flex flex-col gap-6">
                   {voteSubmitted ? (
                     <div className="flex flex-col items-center gap-3 py-4">
@@ -537,7 +653,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
               )}
 
               {/* RESOLUTION phase */}
-              {displayPhase === "resolution" && (
+              {!gameOver && displayPhase === "resolution" && (
                 <div className="flex flex-col gap-6">
                   {resolutionNarrative ? (
                     <div className="prose prose-invert max-w-none">
