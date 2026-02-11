@@ -50,6 +50,13 @@
     }
   ],
   "phases": ["NARRATION", "ACTION", "VOTE", "RESOLUTION"],
+  "actions": [
+    "Reparer les systemes",
+    "Inspecter la coque",
+    "Verifier les reserves d'oxygene",
+    "Surveiller un autre joueur",
+    "Explorer une zone dangereuse"
+  ],
   "gauges": [
     {
       "id": "sante",

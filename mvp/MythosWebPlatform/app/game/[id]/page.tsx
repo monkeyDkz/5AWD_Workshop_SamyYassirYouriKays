@@ -49,6 +49,11 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
   const [actionSubmitted, setActionSubmitted] = useState(false)
   const [actionRemaining, setActionRemaining] = useState<number | null>(null)
 
+  // Action suggestions
+  const [predefinedActions, setPredefinedActions] = useState<string[]>([])
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+
   // Votes
   const [selectedVote, setSelectedVote] = useState<string | null>(null)
   const [voteSubmitted, setVoteSubmitted] = useState(false)
@@ -141,6 +146,9 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       if (data.phase === "ACTION") {
         setActionSubmitted(false)
         setActionRemaining(null)
+        setPredefinedActions([])
+        setAiSuggestions([])
+        setSuggestionsLoading(false)
       }
       if (data.phase === "VOTE") {
         setVoteSubmitted(false)
@@ -165,6 +173,13 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
       if (data.remaining > 0) {
         setWaitingMessage(`En attente de ${data.remaining} joueur(s)...`)
       }
+    })
+
+    // Action suggestions (predefined + AI)
+    socket.on("game:action:suggestions", (data: { predefined: string[]; aiSuggestions: string[]; loading: boolean }) => {
+      setPredefinedActions(data.predefined)
+      setAiSuggestions(data.aiSuggestions)
+      setSuggestionsLoading(data.loading)
     })
 
     // Vote confirmed
@@ -218,6 +233,7 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
         s.off("game:narration")
         s.off("game:phase")
         s.off("game:action:received")
+        s.off("game:action:suggestions")
         s.off("game:vote:received")
         s.off("game:resolution")
         s.off("game:over")
@@ -242,6 +258,13 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
     socket.emit("game:action", { gameId: id, action: trimmed })
     setWaitingMessage("Action envoyee, en attente des autres joueurs...")
   }, [customAction, id])
+
+  const handleSelectSuggestion = useCallback((action: string) => {
+    const socket = getSocket()
+    if (!socket) return
+    socket.emit("game:action", { gameId: id, action })
+    setWaitingMessage("Action envoyee, en attente des autres joueurs...")
+  }, [id])
 
   const handleSubmitVote = useCallback(() => {
     if (!selectedVote) return
@@ -388,8 +411,60 @@ export default function GamePage({ params }: { params: Promise<{ id: string }> }
                         {`"Le temps presse. Que decidez-vous de faire ?"`}
                       </p>
 
+                      {/* Predefined actions */}
+                      {predefinedActions.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Actions possibles</span>
+                          <div className="flex flex-wrap gap-2">
+                            {predefinedActions.map((action) => (
+                              <Button
+                                key={action}
+                                variant="outline"
+                                size="sm"
+                                className="border-border/50 hover:border-primary/50 hover:bg-primary/10"
+                                onClick={() => handleSelectSuggestion(action)}
+                              >
+                                {action}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* AI suggestions */}
                       <div className="flex flex-col gap-2">
-                        <span className="text-xs text-muted-foreground">Ecrivez votre action :</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Suggestions du MJ</span>
+                        {suggestionsLoading ? (
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            <span className="text-xs">Le MJ reflechit a des suggestions...</span>
+                          </div>
+                        ) : aiSuggestions.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {aiSuggestions.map((suggestion) => (
+                              <Button
+                                key={suggestion}
+                                variant="outline"
+                                size="sm"
+                                className="border-amber-500/30 bg-amber-500/5 text-amber-300 hover:border-amber-500/50 hover:bg-amber-500/10"
+                                onClick={() => handleSelectSuggestion(suggestion)}
+                              >
+                                {suggestion}
+                              </Button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+
+                      {/* Separator */}
+                      <div className="flex items-center gap-3">
+                        <div className="h-px flex-1 bg-border/50" />
+                        <span className="text-xs text-muted-foreground">ou ecrivez votre propre action</span>
+                        <div className="h-px flex-1 bg-border/50" />
+                      </div>
+
+                      {/* Custom action input */}
+                      <div className="flex flex-col gap-2">
                         <div className="flex gap-2">
                           <Input
                             placeholder="Que faites-vous ?"

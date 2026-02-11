@@ -34,6 +34,7 @@ export interface ScenarioPack {
     maxRounds: number;
     roles: ScenarioRole[];
     phases: string[];
+    actions: string[];
     gauges: ScenarioGauge[];
     winConditions: ScenarioWinConditions;
     aiPrompt: ScenarioAiPrompt;
@@ -51,6 +52,7 @@ export interface ScenarioMetadata {
 export interface ScenarioConfig {
     roles: ScenarioRole[];
     phases: string[];
+    actions: string[];
     gauges: ScenarioGauge[];
     winConditions: ScenarioWinConditions;
     aiPrompt: ScenarioAiPrompt;

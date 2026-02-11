@@ -65,5 +65,6 @@ export declare class WebsocketGateway implements OnGatewayConnection, OnGatewayD
     private handleAllActionsSubmitted;
     private handleAllVotesSubmitted;
     private resolveAndAdvance;
+    private sendActionSuggestions;
     private emitLobbyUpdate;
 }

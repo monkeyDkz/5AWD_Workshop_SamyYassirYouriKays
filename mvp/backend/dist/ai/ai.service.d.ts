@@ -10,6 +10,8 @@ export declare class AiService {
     private static readonly FALLBACK_ACTIONS;
     constructor(configService: ConfigService);
     private chat;
+    private chatOpenAI;
+    private chatAnthropic;
     narrate(systemPrompt: string, userPrompt: string, context?: string): Promise<string>;
     streamNarrate(systemPrompt: string, userPrompt: string, context?: string): AsyncGenerator<string>;
     generateActionSuggestions(scenario: any, gameState: any, playerRole: string): Promise<string[]>;

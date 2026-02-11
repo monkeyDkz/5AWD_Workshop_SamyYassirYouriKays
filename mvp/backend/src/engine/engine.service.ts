@@ -961,6 +961,16 @@ export class EngineService {
   }
 
   // ===========================================================================
+  // GET PREDEFINED ACTIONS
+  // ===========================================================================
+
+  async getPredefinedActions(gameId: string): Promise<string[]> {
+    const state = await this.loadState(gameId);
+    const scenario = this.scenariosService.getScenario(state.scenarioSlug);
+    return scenario.actions || [];
+  }
+
+  // ===========================================================================
   // PRIVATE HELPERS
   // ===========================================================================
 

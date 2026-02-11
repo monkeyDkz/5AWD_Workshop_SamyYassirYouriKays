@@ -32,7 +32,7 @@ export class AiService {
           'OPENAI_API_KEY not set — AI features will use fallback responses',
         );
       }
-      this.openai = new OpenAI({ apiKey: apiKey || 'missing-key' });
+      this.openai = new OpenAI({ apiKey: apiKey || 'missing-key', maxRetries: 0, timeout: 60000 });
       this.model = this.configService.get<string>('OPENAI_MODEL', 'gpt-4o');
     } else {
       const apiKey = this.configService.get<string>('ANTHROPIC_API_KEY');
@@ -55,32 +55,55 @@ export class AiService {
 
   /**
    * Unified chat method that routes to the correct provider.
+   * Includes a 15s timeout to prevent hanging requests.
    */
   private async chat(
     system: string,
     user: string,
     maxTokens: number,
   ): Promise<string> {
-    if (this.provider === 'openai' && this.openai) {
-      const response = await this.openai.chat.completions.create({
-        model: this.model,
-        max_tokens: maxTokens,
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: user },
-        ],
-      });
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('AI request timed out after 60s')), 60000),
+    );
 
-      return response.choices[0]?.message?.content || '';
-    }
+    const request = this.provider === 'openai' && this.openai
+      ? this.chatOpenAI(system, user, maxTokens)
+      : this.chatAnthropic(system, user, maxTokens);
 
-    // Default: Anthropic
+    return Promise.race([request, timeout]);
+  }
+
+  private async chatOpenAI(
+    system: string,
+    user: string,
+    maxTokens: number,
+  ): Promise<string> {
+    this.logger.debug('Calling OpenAI API...');
+    const response = await this.openai!.chat.completions.create({
+      model: this.model,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
+    });
+    this.logger.debug('OpenAI API responded');
+    return response.choices[0]?.message?.content || '';
+  }
+
+  private async chatAnthropic(
+    system: string,
+    user: string,
+    maxTokens: number,
+  ): Promise<string> {
+    this.logger.debug('Calling Anthropic API...');
     const response = await this.anthropic!.messages.create({
       model: this.model,
       max_tokens: maxTokens,
       system,
       messages: [{ role: 'user', content: user }],
     });
+    this.logger.debug('Anthropic API responded');
 
     const textBlock = response.content.find(
       (block) => block.type === 'text',

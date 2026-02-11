@@ -584,6 +584,11 @@ let EngineService = EngineService_1 = class EngineService {
         }
         return this.aiService.generateActionSuggestions(scenario, state, player.role);
     }
+    async getPredefinedActions(gameId) {
+        const state = await this.loadState(gameId);
+        const scenario = this.scenariosService.getScenario(state.scenarioSlug);
+        return scenario.actions || [];
+    }
     async loadState(gameId) {
         const state = await this.getGameState(gameId);
         if (!state) {

@@ -28,6 +28,7 @@ export declare class EngineService {
     getGameState(gameId: string): Promise<GameState | null>;
     checkGameOver(gameId: string): Promise<GameResult | null>;
     getActionSuggestions(gameId: string, userId: string): Promise<string[]>;
+    getPredefinedActions(gameId: string): Promise<string[]>;
     private loadState;
     private saveState;
     private getCurrentRound;

@@ -58,6 +58,13 @@
     }
   ],
   "phases": ["NARRATION", "ACTION", "VOTE", "RESOLUTION"],
+  "actions": [
+    "Presenter un argument",
+    "Interroger un temoin",
+    "Chercher des preuves",
+    "Contester un temoignage",
+    "Faire une declaration solennelle"
+  ],
   "gauges": [
     {
       "id": "credibilite",

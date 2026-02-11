@@ -29,7 +29,7 @@ let AiService = AiService_1 = class AiService {
             if (!apiKey) {
                 this.logger.warn('OPENAI_API_KEY not set — AI features will use fallback responses');
             }
-            this.openai = new openai_1.default({ apiKey: apiKey || 'missing-key' });
+            this.openai = new openai_1.default({ apiKey: apiKey || 'missing-key', maxRetries: 0, timeout: 60000 });
             this.model = this.configService.get('OPENAI_MODEL', 'gpt-4o');
         }
         else {
@@ -43,23 +43,34 @@ let AiService = AiService_1 = class AiService {
         this.logger.log(`AI Service initialized — provider: ${this.provider}, model: ${this.model}`);
     }
     async chat(system, user, maxTokens) {
-        if (this.provider === 'openai' && this.openai) {
-            const response = await this.openai.chat.completions.create({
-                model: this.model,
-                max_tokens: maxTokens,
-                messages: [
-                    { role: 'system', content: system },
-                    { role: 'user', content: user },
-                ],
-            });
-            return response.choices[0]?.message?.content || '';
-        }
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('AI request timed out after 60s')), 60000));
+        const request = this.provider === 'openai' && this.openai
+            ? this.chatOpenAI(system, user, maxTokens)
+            : this.chatAnthropic(system, user, maxTokens);
+        return Promise.race([request, timeout]);
+    }
+    async chatOpenAI(system, user, maxTokens) {
+        this.logger.debug('Calling OpenAI API...');
+        const response = await this.openai.chat.completions.create({
+            model: this.model,
+            max_tokens: maxTokens,
+            messages: [
+                { role: 'system', content: system },
+                { role: 'user', content: user },
+            ],
+        });
+        this.logger.debug('OpenAI API responded');
+        return response.choices[0]?.message?.content || '';
+    }
+    async chatAnthropic(system, user, maxTokens) {
+        this.logger.debug('Calling Anthropic API...');
         const response = await this.anthropic.messages.create({
             model: this.model,
             max_tokens: maxTokens,
             system,
             messages: [{ role: 'user', content: user }],
         });
+        this.logger.debug('Anthropic API responded');
         const textBlock = response.content.find((block) => block.type === 'text');
         if (!textBlock || textBlock.type !== 'text') {
             return '';

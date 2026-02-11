@@ -379,16 +379,17 @@ export class WebsocketGateway
       // Start narration phase
       const narration = await this.engineService.startNarration(data.gameId);
 
+      // Emit phase update BEFORE narration so the frontend
+      // resets state first, then receives the narration text
+      this.server.to(gameRoom).emit('game:phase', {
+        phase: 'NARRATION',
+        round: 1,
+      });
+
       // Emit narration to game room
       this.server.to(gameRoom).emit('game:narration', {
         text: narration.text,
         isStreaming: false,
-      });
-
-      // Emit phase update
-      this.server.to(gameRoom).emit('game:phase', {
-        phase: 'NARRATION',
-        round: 1,
       });
     } catch (error) {
       this.logger.error(`Error in game:start: ${error}`);
@@ -461,6 +462,43 @@ export class WebsocketGateway
       const gameState = await this.cacheService.getGameState(data.gameId);
       if (gameState) {
         client.emit('game:state', gameState);
+
+        // If currently in ACTION phase, send action suggestions to this client
+        if (gameState.currentPhase === 'ACTION') {
+          this.engineService
+            .getPredefinedActions(data.gameId)
+            .then(async (predefined) => {
+              client.emit('game:action:suggestions', {
+                predefined,
+                aiSuggestions: [],
+                loading: true,
+              });
+
+              try {
+                const aiSuggestions =
+                  await this.engineService.getActionSuggestions(
+                    data.gameId,
+                    user.userId,
+                  );
+                client.emit('game:action:suggestions', {
+                  predefined,
+                  aiSuggestions,
+                  loading: false,
+                });
+              } catch {
+                client.emit('game:action:suggestions', {
+                  predefined,
+                  aiSuggestions: [],
+                  loading: false,
+                });
+              }
+            })
+            .catch((err) =>
+              this.logger.error(
+                `Error sending suggestions on join: ${err}`,
+              ),
+            );
+        }
       }
     } catch (error) {
       this.logger.error(`Error in game:join: ${error}`);
@@ -709,6 +747,13 @@ export class WebsocketGateway
         round: state.currentRound,
       });
 
+      // If we just entered ACTION phase, send action suggestions
+      if (state.currentPhase === 'ACTION') {
+        this.sendActionSuggestions(data.gameId, gameRoom).catch((err) =>
+          this.logger.error(`Error sending action suggestions: ${err}`),
+        );
+      }
+
       this.logger.log(
         `Game ${data.gameId} phase advanced to ${state.currentPhase} by host ${user.username}`,
       );
@@ -819,14 +864,14 @@ export class WebsocketGateway
           const narration =
             await this.engineService.startNarration(gameId);
 
-          this.server.to(gameRoom).emit('game:narration', {
-            text: narration.text,
-            isStreaming: false,
-          });
-
           this.server.to(gameRoom).emit('game:phase', {
             phase: 'NARRATION',
             round: narration.round,
+          });
+
+          this.server.to(gameRoom).emit('game:narration', {
+            text: narration.text,
+            isStreaming: false,
           });
 
           this.logger.log(
@@ -841,6 +886,85 @@ export class WebsocketGateway
           });
         }
       }, 5000);
+    }
+  }
+
+  // ===========================================================================
+  // Action suggestions
+  // ===========================================================================
+
+  /**
+   * Send predefined actions immediately, then generate AI suggestions per
+   * player in parallel and push them once ready.
+   */
+  private async sendActionSuggestions(
+    gameId: string,
+    gameRoom: string,
+  ): Promise<void> {
+    try {
+      const predefined =
+        await this.engineService.getPredefinedActions(gameId);
+
+      // Send predefined actions immediately to every socket in the room
+      // with loading=true so the frontend shows a spinner for AI suggestions
+      const sockets = await this.server.in(gameRoom).fetchSockets();
+
+      for (const socket of sockets) {
+        socket.emit('game:action:suggestions', {
+          predefined,
+          aiSuggestions: [],
+          loading: true,
+        });
+      }
+
+      // Generate AI suggestions per player in parallel
+      const gameState = await this.cacheService.getGameState(gameId);
+      if (!gameState) return;
+
+      const alivePlayers = gameState.players.filter((p) => p.isAlive);
+
+      const suggestionPromises = alivePlayers.map(async (player) => {
+        try {
+          const suggestions = await this.engineService.getActionSuggestions(
+            gameId,
+            player.userId,
+          );
+          return { userId: player.userId, suggestions };
+        } catch (err) {
+          this.logger.warn(
+            `Failed to get AI suggestions for ${player.userId}: ${err}`,
+          );
+          return { userId: player.userId, suggestions: [] };
+        }
+      });
+
+      const results = await Promise.all(suggestionPromises);
+
+      // Send per-player AI suggestions to the matching socket
+      for (const socket of sockets) {
+        const socketUser = this.socketUsers.get(socket.id);
+        if (!socketUser) continue;
+
+        const playerResult = results.find(
+          (r) => r.userId === socketUser.userId,
+        );
+
+        socket.emit('game:action:suggestions', {
+          predefined,
+          aiSuggestions: playerResult?.suggestions ?? [],
+          loading: false,
+        });
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error sending action suggestions for game ${gameId}: ${error}`,
+      );
+      // On failure, send loading=false so the frontend stops the spinner
+      this.server.to(gameRoom).emit('game:action:suggestions', {
+        predefined: [],
+        aiSuggestions: [],
+        loading: false,
+      });
     }
   }
 

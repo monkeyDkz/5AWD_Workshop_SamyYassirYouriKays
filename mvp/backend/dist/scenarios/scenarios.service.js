@@ -59,6 +59,7 @@ let ScenariosService = class ScenariosService {
         return {
             roles: pack.roles,
             phases: pack.phases,
+            actions: pack.actions || [],
             gauges: pack.gauges,
             winConditions: pack.winConditions,
             aiPrompt: pack.aiPrompt,

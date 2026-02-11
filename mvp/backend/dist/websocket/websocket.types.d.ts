@@ -84,6 +84,11 @@ export interface ServerToClientEvents {
         message: string;
         timestamp: string;
     }) => void;
+    'game:action:suggestions': (data: {
+        predefined: string[];
+        aiSuggestions: string[];
+        loading: boolean;
+    }) => void;
     'game:timer': (data: {
         seconds: number;
     }) => void;

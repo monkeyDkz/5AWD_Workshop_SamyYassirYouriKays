@@ -227,13 +227,13 @@ let WebsocketGateway = WebsocketGateway_1 = class WebsocketGateway {
             this.server.to(gameRoom).emit('lobby:started', { gameId: data.gameId });
             this.logger.log(`Game ${data.gameId} started by ${user.username}`);
             const narration = await this.engineService.startNarration(data.gameId);
-            this.server.to(gameRoom).emit('game:narration', {
-                text: narration.text,
-                isStreaming: false,
-            });
             this.server.to(gameRoom).emit('game:phase', {
                 phase: 'NARRATION',
                 round: 1,
+            });
+            this.server.to(gameRoom).emit('game:narration', {
+                text: narration.text,
+                isStreaming: false,
             });
         }
         catch (error) {
@@ -277,6 +277,33 @@ let WebsocketGateway = WebsocketGateway_1 = class WebsocketGateway {
             const gameState = await this.cacheService.getGameState(data.gameId);
             if (gameState) {
                 client.emit('game:state', gameState);
+                if (gameState.currentPhase === 'ACTION') {
+                    this.engineService
+                        .getPredefinedActions(data.gameId)
+                        .then(async (predefined) => {
+                        client.emit('game:action:suggestions', {
+                            predefined,
+                            aiSuggestions: [],
+                            loading: true,
+                        });
+                        try {
+                            const aiSuggestions = await this.engineService.getActionSuggestions(data.gameId, user.userId);
+                            client.emit('game:action:suggestions', {
+                                predefined,
+                                aiSuggestions,
+                                loading: false,
+                            });
+                        }
+                        catch {
+                            client.emit('game:action:suggestions', {
+                                predefined,
+                                aiSuggestions: [],
+                                loading: false,
+                            });
+                        }
+                    })
+                        .catch((err) => this.logger.error(`Error sending suggestions on join: ${err}`));
+                }
             }
         }
         catch (error) {
@@ -428,6 +455,9 @@ let WebsocketGateway = WebsocketGateway_1 = class WebsocketGateway {
                 phase: state.currentPhase,
                 round: state.currentRound,
             });
+            if (state.currentPhase === 'ACTION') {
+                this.sendActionSuggestions(data.gameId, gameRoom).catch((err) => this.logger.error(`Error sending action suggestions: ${err}`));
+            }
             this.logger.log(`Game ${data.gameId} phase advanced to ${state.currentPhase} by host ${user.username}`);
         }
         catch (error) {
@@ -489,13 +519,13 @@ let WebsocketGateway = WebsocketGateway_1 = class WebsocketGateway {
             setTimeout(async () => {
                 try {
                     const narration = await this.engineService.startNarration(gameId);
-                    this.server.to(gameRoom).emit('game:narration', {
-                        text: narration.text,
-                        isStreaming: false,
-                    });
                     this.server.to(gameRoom).emit('game:phase', {
                         phase: 'NARRATION',
                         round: narration.round,
+                    });
+                    this.server.to(gameRoom).emit('game:narration', {
+                        text: narration.text,
+                        isStreaming: false,
                     });
                     this.logger.log(`Game ${gameId} started narration for round ${narration.round}`);
                 }
@@ -506,6 +536,53 @@ let WebsocketGateway = WebsocketGateway_1 = class WebsocketGateway {
                     });
                 }
             }, 5000);
+        }
+    }
+    async sendActionSuggestions(gameId, gameRoom) {
+        try {
+            const predefined = await this.engineService.getPredefinedActions(gameId);
+            const sockets = await this.server.in(gameRoom).fetchSockets();
+            for (const socket of sockets) {
+                socket.emit('game:action:suggestions', {
+                    predefined,
+                    aiSuggestions: [],
+                    loading: true,
+                });
+            }
+            const gameState = await this.cacheService.getGameState(gameId);
+            if (!gameState)
+                return;
+            const alivePlayers = gameState.players.filter((p) => p.isAlive);
+            const suggestionPromises = alivePlayers.map(async (player) => {
+                try {
+                    const suggestions = await this.engineService.getActionSuggestions(gameId, player.userId);
+                    return { userId: player.userId, suggestions };
+                }
+                catch (err) {
+                    this.logger.warn(`Failed to get AI suggestions for ${player.userId}: ${err}`);
+                    return { userId: player.userId, suggestions: [] };
+                }
+            });
+            const results = await Promise.all(suggestionPromises);
+            for (const socket of sockets) {
+                const socketUser = this.socketUsers.get(socket.id);
+                if (!socketUser)
+                    continue;
+                const playerResult = results.find((r) => r.userId === socketUser.userId);
+                socket.emit('game:action:suggestions', {
+                    predefined,
+                    aiSuggestions: playerResult?.suggestions ?? [],
+                    loading: false,
+                });
+            }
+        }
+        catch (error) {
+            this.logger.error(`Error sending action suggestions for game ${gameId}: ${error}`);
+            this.server.to(gameRoom).emit('game:action:suggestions', {
+                predefined: [],
+                aiSuggestions: [],
+                loading: false,
+            });
         }
     }
     async emitLobbyUpdate(room, gameId) {
