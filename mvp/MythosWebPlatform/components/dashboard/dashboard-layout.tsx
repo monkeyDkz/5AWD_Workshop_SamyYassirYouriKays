@@ -137,7 +137,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar - Desktop */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-border bg-card/50 md:block">
+      <aside className="hidden w-64 flex-shrink-0 border-r border-border bg-card/50 md:block sticky top-0 h-screen overflow-y-auto">
         <div className="flex h-full flex-col">
           <div className="flex items-center gap-2 border-b border-border px-6 py-5">
             <Link href="/" className="flex items-center gap-2">
