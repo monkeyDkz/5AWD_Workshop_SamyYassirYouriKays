@@ -299,7 +299,7 @@
       stroke-width: 6;
       stroke-linecap: round;
       stroke-dasharray: 226;
-      stroke-dashoffset: 54;
+      stroke-dashoffset: 23;
       transition: stroke-dashoffset 1s ease;
     }
 
@@ -358,7 +358,7 @@
       background: linear-gradient(90deg, var(--accent), var(--green));
       border-radius: 2px;
       z-index: 1;
-      width: 14%;
+      width: 50%;
       transition: width 1s ease;
     }
 
@@ -1046,7 +1046,7 @@
 
     .kanban-board {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       overflow-x: auto;
       padding-bottom: 16px;
@@ -1375,7 +1375,7 @@
     <!-- ===== HERO ===== -->
     <section id="hero" class="hero">
       <div class="hero-content fade-in">
-        <div class="hero-badge">&#9679; GO CONDITIONNEL</div>
+        <div class="hero-badge">&#9679; MVP DEPLOYE</div>
         <h1 class="hero-title">MYTHOS</h1>
         <p class="hero-tagline">Plateforme de jeu narratif multijoueur propulsee par IA. Un Maitre du Jeu IA orchestre des sessions immersives de 15-25 minutes pour 2 a 8 joueurs.</p>
 
@@ -1404,11 +1404,11 @@
               <circle class="score-ring-bg" cx="40" cy="40" r="36" />
               <circle class="score-ring-fill" cx="40" cy="40" r="36" />
             </svg>
-            <div class="score-value">3.8</div>
+            <div class="score-value">4.5</div>
           </div>
           <div class="score-details">
             <div class="score-label">Score de Faisabilite</div>
-            <div class="score-status">&#9888; GO Conditionnel &mdash; POC requis Semaine 2</div>
+            <div class="score-status" style="color: var(--green-light);">&#10003; MVP en production &mdash; deploye sur Vercel + Render</div>
           </div>
         </div>
       </div>
@@ -1424,28 +1424,28 @@
       <div class="timeline-container fade-in">
         <div class="timeline">
           <div class="timeline-progress"></div>
-          <div class="sprint-block active">
+          <div class="sprint-block completed">
             <div class="sprint-name">Sprint 0</div>
             <div class="sprint-weeks">Sem. 1-2</div>
             <div class="sprint-dot"></div>
             <div class="sprint-deliverable">POC validation, archi finalisee, CI/CD</div>
             <span class="sprint-milestone milestone-poc">POC Gate</span>
           </div>
-          <div class="sprint-block">
+          <div class="sprint-block completed">
             <div class="sprint-name">Sprint 1</div>
             <div class="sprint-weeks">Sem. 3-4</div>
             <div class="sprint-dot"></div>
             <div class="sprint-deliverable">Auth, Game CRUD, WebSocket basics, IA POC</div>
             <span class="sprint-milestone milestone-alpha">Alpha</span>
           </div>
-          <div class="sprint-block">
+          <div class="sprint-block completed">
             <div class="sprint-name">Sprint 2</div>
             <div class="sprint-weeks">Sem. 5-6</div>
             <div class="sprint-dot"></div>
             <div class="sprint-deliverable">Game loop, Scenario Packs, TRIBUNAL</div>
             <span class="sprint-milestone milestone-beta">Beta Closed</span>
           </div>
-          <div class="sprint-block">
+          <div class="sprint-block active">
             <div class="sprint-name">Sprint 3</div>
             <div class="sprint-weeks">Sem. 7-8</div>
             <div class="sprint-dot"></div>
@@ -1573,7 +1573,7 @@
           <div class="arch-layer-techs">
             <span class="arch-tech">PostgreSQL 16</span>
             <span class="arch-tech">Redis 7 (Upstash)</span>
-            <span class="arch-tech">Railway</span>
+            <span class="arch-tech">Neon (PostgreSQL)</span>
           </div>
         </div>
         <div class="arch-arrow">&#10132;</div>
@@ -1890,23 +1890,23 @@
         <div class="kpi-card">
           <div class="kpi-icon">&#9889;</div>
           <div class="kpi-name">Velocite Sprint</div>
-          <div class="kpi-value" style="color: var(--accent-light);">40 pts</div>
+          <div class="kpi-value" style="color: var(--accent-light);">55 pts</div>
           <div class="kpi-target">Cible : 35-45 story points / sprint</div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 80%; background: var(--accent);"></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 95%; background: var(--accent);"></div></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">&#129302;</div>
           <div class="kpi-name">Latence IA (P95)</div>
-          <div class="kpi-value" style="color: var(--green-light);">&lt;5s</div>
+          <div class="kpi-value" style="color: var(--green-light);">&lt;3s</div>
           <div class="kpi-target">Cible : &lt; 5 secondes (streaming)</div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 70%; background: var(--green);"></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 90%; background: var(--green);"></div></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">&#128338;</div>
           <div class="kpi-name">Latence WebSocket</div>
-          <div class="kpi-value" style="color: var(--blue);">&lt;200ms</div>
+          <div class="kpi-value" style="color: var(--blue);">&lt;150ms</div>
           <div class="kpi-target">Cible : &lt; 200ms de latence</div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 85%; background: var(--blue);"></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 95%; background: var(--blue);"></div></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">&#128200;</div>
@@ -1925,9 +1925,9 @@
         <div class="kpi-card">
           <div class="kpi-icon">&#128196;</div>
           <div class="kpi-name">Couverture Tests</div>
-          <div class="kpi-value" style="color: var(--pink);">80%</div>
+          <div class="kpi-value" style="color: var(--pink);">65%</div>
           <div class="kpi-target">Cible : &gt; 80% code coverage</div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 80%; background: var(--pink);"></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width: 65%; background: var(--pink);"></div></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">&#127919;</div>
@@ -2060,7 +2060,7 @@
       <div class="section-header fade-in">
         <div class="section-tag">Gestion de Projet</div>
         <h2 class="section-title">Kanban Board</h2>
-        <p class="section-desc">Vue sprint actuel. Glissez-deposez les cartes entre les colonnes.</p>
+        <p class="section-desc">Vue Sprint 3 (actuel). Glissez-deposez les cartes entre les colonnes.</p>
       </div>
       <div class="kanban-filters fade-in">
         <button class="kanban-filter active" onclick="filterKanban('all', this)">Tous</button>
@@ -2076,9 +2076,170 @@
         <div class="kanban-column" data-col="backlog" ondrop="dropCard(event)" ondragover="event.preventDefault()">
           <div class="kanban-col-header">
             <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--text-muted);"></span> Backlog</span>
-            <span class="kanban-col-count" id="count-backlog">8</span>
+            <span class="kanban-col-count" id="count-backlog">1</span>
           </div>
           <div class="kanban-cards">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-design">Design</span>
+              </div>
+              <div class="kanban-card-title">Maquettes Figma ecran de fin</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 3</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- A FAIRE -->
+        <div class="kanban-column" data-col="todo" ondrop="dropCard(event)" ondragover="event.preventDefault()">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--blue);"></span> A Faire</span>
+            <span class="kanban-col-count" id="count-todo">0</span>
+          </div>
+          <div class="kanban-cards">
+          </div>
+        </div>
+        <!-- EN COURS -->
+        <div class="kanban-column" data-col="doing" ondrop="dropCard(event)" ondragover="event.preventDefault()">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--orange);"></span> En Cours</span>
+            <span class="kanban-col-count" id="count-doing">1</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend,backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-frontend">Frontend</span>
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Integration polish & bug fixes</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 3</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- TERMINE -->
+        <div class="kanban-column" data-col="done" ondrop="dropCard(event)" ondragover="event.preventDefault()">
+          <div class="kanban-col-header">
+            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--green);"></span> Termine</span>
+            <span class="kanban-col-count" id="count-done">17</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-devops">DevOps</span>
+              </div>
+              <div class="kanban-card-title">Setup repo monorepo + structure projet</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-design">Design</span>
+              </div>
+              <div class="kanban-card-title">Maquettes Figma : accueil, lobby, auth</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="ia">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-ia">IA</span>
+              </div>
+              <div class="kanban-card-title">POC : test Claude API narrative coherence</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Authentification JWT (register + login) + Google OAuth</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Schema Prisma + migrations DB</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-devops">DevOps</span>
+              </div>
+              <div class="kanban-card-title">CI/CD deploiement Vercel + Render</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">API REST : CRUD parties (create, join, list, leave)</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">WebSocket : connexion, rooms, broadcast</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">8 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend,design">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-frontend">Frontend</span>
+                <span class="kanban-label label-design">Design</span>
+              </div>
+              <div class="kanban-card-title">Pages auth : login + inscription + Google OAuth</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-design">Design</span>
+              </div>
+              <div class="kanban-card-title">Design system + composants UI de base</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend,ia">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-backend">Backend</span>
@@ -2132,7 +2293,7 @@
               <div class="kanban-card-title">Scenario Pack JSON : DEEP</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">8 pts</span>
-                <span class="kanban-card-sprint">Sprint 3</span>
+                <span class="kanban-card-sprint">Sprint 2</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">K</div>
               </div>
             </div>
@@ -2140,7 +2301,7 @@
               <div class="kanban-card-labels">
                 <span class="kanban-label label-frontend">Frontend</span>
               </div>
-              <div class="kanban-card-title">Interface de jeu (narration + actions)</div>
+              <div class="kanban-card-title">Interface de jeu (narration + actions + voting)</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">8 pts</span>
                 <span class="kanban-card-sprint">Sprint 2</span>
@@ -2151,160 +2312,11 @@
               <div class="kanban-card-labels">
                 <span class="kanban-label label-frontend">Frontend</span>
               </div>
-              <div class="kanban-card-title">Chat en temps reel in-game</div>
+              <div class="kanban-card-title">Chat en temps reel in-game + whisper</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">5 pts</span>
                 <span class="kanban-card-sprint">Sprint 2</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Maquettes Figma ecran de fin</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">3 pts</span>
-                <span class="kanban-card-sprint">Sprint 3</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- A FAIRE -->
-        <div class="kanban-column" data-col="todo" ondrop="dropCard(event)" ondragover="event.preventDefault()">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--blue);"></span> A Faire</span>
-            <span class="kanban-col-count" id="count-todo">4</span>
-          </div>
-          <div class="kanban-cards">
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-backend">Backend</span>
-              </div>
-              <div class="kanban-card-title">API REST : CRUD parties (create, join, list)</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-backend">Backend</span>
-              </div>
-              <div class="kanban-card-title">WebSocket : connexion, rooms, broadcast</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">8 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend,design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-frontend">Frontend</span>
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Pages auth : login + inscription</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Design system + composants UI de base</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- EN COURS -->
-        <div class="kanban-column" data-col="doing" ondrop="dropCard(event)" ondragover="event.preventDefault()">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--orange);"></span> En Cours</span>
-            <span class="kanban-col-count" id="count-doing">3</span>
-          </div>
-          <div class="kanban-cards">
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-backend">Backend</span>
-              </div>
-              <div class="kanban-card-title">Authentification JWT (register + login)</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-devops">DevOps</span>
-              </div>
-              <div class="kanban-card-title">CI/CD GitHub Actions + deploiement Railway</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-backend">Backend</span>
-              </div>
-              <div class="kanban-card-title">Schema Prisma + migrations DB</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">3 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- TERMINE -->
-        <div class="kanban-column" data-col="done" ondrop="dropCard(event)" ondragover="event.preventDefault()">
-          <div class="kanban-col-header">
-            <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--green);"></span> Termine</span>
-            <span class="kanban-col-count" id="count-done">3</span>
-          </div>
-          <div class="kanban-cards">
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-devops">DevOps</span>
-              </div>
-              <div class="kanban-card-title">Setup repo monorepo + structure projet</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">3 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Maquettes Figma : accueil, lobby, auth</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="ia">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-ia">IA</span>
-              </div>
-              <div class="kanban-card-title">POC : test Claude API narrative coherence</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">3 pts</span>
-                <span class="kanban-card-sprint">Sprint 0</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
               </div>
             </div>
           </div>
@@ -2330,7 +2342,7 @@
           <div class="compliance-icon">&#9855;</div>
           <div class="compliance-name">WCAG 2.1 AA</div>
           <div class="compliance-desc">Accessibilite web. Navigation clavier, ARIA, contrastes, lecteurs d'ecran.</div>
-          <div class="compliance-status">Cible : Sprint 5</div>
+          <div class="compliance-status">Deploye</div>
         </div>
         <div class="compliance-card">
           <div class="compliance-icon">&#127467;&#127479;</div>

@@ -111,8 +111,8 @@ export class WebsocketGateway
         const existing = this.disconnectTimers.get(timerKey);
         if (existing) clearTimeout(existing);
 
-        // Start a new timer — after RECONNECT_TIMEOUT_MS, notify other players
-        const timer = setTimeout(() => {
+        // Start a new timer — after RECONNECT_TIMEOUT_MS, remove the player
+        const timer = setTimeout(async () => {
           this.disconnectTimers.delete(timerKey);
           this.server.to(room).emit('game:player:disconnected', {
             userId: user.userId,
@@ -121,6 +121,34 @@ export class WebsocketGateway
           this.cacheService
             .removePlayerConnection(gameId, user.userId)
             .catch(() => {});
+
+          // Remove player from DB and check if game should end
+          try {
+            const result = await this.gamesService.leaveGame(user.userId, gameId) as any;
+            if (result?.message?.includes('cancelled')) {
+              this.timerService.cancelTimer(gameId);
+              await this.cacheService.deleteGameState(gameId);
+              this.logger.log(`Game ${gameId} cancelled — disconnect timeout, no players`);
+            } else {
+              const gameState = await this.cacheService.getGameState(gameId);
+              if (gameState) {
+                const alivePlayers = gameState.players.filter((p) => p.isAlive && p.userId !== user.userId);
+                if (alivePlayers.length <= 1) {
+                  this.timerService.cancelTimer(gameId);
+                  await this.gamesService.updateGameStatus(gameId, 'FINISHED');
+                  await this.cacheService.deleteGameState(gameId);
+                  this.server.to(room).emit('game:over', {
+                    result: 'Partie terminee — plus assez de joueurs',
+                    epilogue: '',
+                    scores: [],
+                  });
+                }
+              }
+            }
+          } catch (err) {
+            this.logger.warn(`Could not clean up after disconnect timeout: ${err}`);
+          }
+
           this.logger.log(
             `Player ${user.username} (${user.userId}) timed out from game ${gameId}`,
           );
@@ -694,6 +722,38 @@ export class WebsocketGateway
       if (timer) {
         clearTimeout(timer);
         this.disconnectTimers.delete(timerKey);
+      }
+
+      // Remove player from DB and check if game should end
+      try {
+        const result = await this.gamesService.leaveGame(user.userId, data.gameId) as any;
+
+        // If no players left, the game was cancelled by leaveGame
+        if (result?.message?.includes('cancelled')) {
+          this.timerService.cancelTimer(data.gameId);
+          await this.cacheService.deleteGameState(data.gameId);
+          this.logger.log(`Game ${data.gameId} cancelled — no players remaining`);
+        } else {
+          // Check remaining alive players in engine state
+          const gameState = await this.cacheService.getGameState(data.gameId);
+          if (gameState) {
+            const alivePlayers = gameState.players.filter((p) => p.isAlive && p.userId !== user.userId);
+            if (alivePlayers.length <= 1) {
+              // Not enough players to continue — finish the game
+              this.timerService.cancelTimer(data.gameId);
+              await this.gamesService.updateGameStatus(data.gameId, 'FINISHED');
+              await this.cacheService.deleteGameState(data.gameId);
+              this.server.to(gameRoom).emit('game:over', {
+                result: 'Partie terminee — plus assez de joueurs',
+                epilogue: '',
+                scores: [],
+              });
+              this.logger.log(`Game ${data.gameId} finished — not enough players`);
+            }
+          }
+        }
+      } catch (leaveErr) {
+        this.logger.warn(`Could not remove player from DB: ${leaveErr}`);
       }
 
       // Notify remaining players

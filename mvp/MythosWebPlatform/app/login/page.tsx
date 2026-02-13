@@ -3,12 +3,19 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, Loader2, ShieldBan } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { useAuth } from "@/lib/auth"
 
 export default function LoginPage() {
@@ -17,6 +24,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [banInfo, setBanInfo] = useState<{ bannedUntil: string } | null>(null)
   const { login, user } = useAuth()
   const router = useRouter()
 
@@ -31,8 +39,14 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-    } catch (err: any) {
-      setError(err.message || "Erreur de connexion")
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      const data = (err as Record<string, unknown>)?.data as Record<string, unknown> | undefined
+      if (msg.toLowerCase().includes("banned")) {
+        setBanInfo({ bannedUntil: (data?.bannedUntil as string) || "" })
+      } else {
+        setError(msg || "Erreur de connexion")
+      }
     } finally {
       setLoading(false)
     }
@@ -159,6 +173,42 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
+      {/* Ban modal */}
+      <Dialog open={!!banInfo} onOpenChange={() => setBanInfo(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
+              <ShieldBan className="h-8 w-8 text-red-500" />
+            </div>
+            <DialogTitle className="text-xl">Compte suspendu</DialogTitle>
+            <DialogDescription className="text-center">
+              Votre compte a ete temporairement banni en raison d{"'"}un non-respect des regles.
+            </DialogDescription>
+          </DialogHeader>
+          {banInfo && banInfo.bannedUntil && (
+            <div className="mt-2 rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-center">
+              <p className="text-sm text-muted-foreground">Fin de la suspension :</p>
+              <p className="mt-1 text-lg font-semibold text-foreground">
+                {new Date(banInfo.bannedUntil).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          )}
+          <Button
+            className="mt-4 w-full"
+            variant="outline"
+            onClick={() => setBanInfo(null)}
+          >
+            Compris
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -80,6 +81,14 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Check ban status
+    if (user.bannedUntil && new Date(user.bannedUntil) > new Date()) {
+      throw new ForbiddenException({
+        message: 'Account is banned',
+        bannedUntil: user.bannedUntil.toISOString(),
+      });
     }
 
     // Return token + user data without passwordHash
