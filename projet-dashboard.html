@@ -1064,6 +1064,7 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       min-height: 400px;
+      max-height: 600px;
       display: flex;
       flex-direction: column;
     }
@@ -1428,21 +1429,21 @@
             <div class="sprint-name">Sprint 0</div>
             <div class="sprint-weeks">Sem. 1-2</div>
             <div class="sprint-dot"></div>
-            <div class="sprint-deliverable">POC validation, archi finalisee, CI/CD</div>
+            <div class="sprint-deliverable">Archi, Design System, DB, Auth, POC Claude, Landing page</div>
             <span class="sprint-milestone milestone-poc">POC Gate</span>
           </div>
           <div class="sprint-block completed">
             <div class="sprint-name">Sprint 1</div>
             <div class="sprint-weeks">Sem. 3-4</div>
             <div class="sprint-dot"></div>
-            <div class="sprint-deliverable">Auth, Game CRUD, WebSocket basics, IA POC</div>
+            <div class="sprint-deliverable">Game CRUD, Cache, WebSocket, Lobby, Dashboard, CI/CD</div>
             <span class="sprint-milestone milestone-alpha">Alpha</span>
           </div>
           <div class="sprint-block completed">
             <div class="sprint-name">Sprint 2</div>
             <div class="sprint-weeks">Sem. 5-6</div>
             <div class="sprint-dot"></div>
-            <div class="sprint-deliverable">Game loop, Scenario Packs, TRIBUNAL</div>
+            <div class="sprint-deliverable">Scenarios, Game Engine, Game UI, Admin, Notifications</div>
             <span class="sprint-milestone milestone-beta">Beta Closed</span>
           </div>
           <div class="sprint-block active">
@@ -2126,9 +2127,10 @@
         <div class="kanban-column" data-col="done" ondrop="dropCard(event)" ondragover="event.preventDefault()">
           <div class="kanban-col-header">
             <span class="kanban-col-title"><span class="kanban-col-dot" style="background: var(--green);"></span> Termine</span>
-            <span class="kanban-col-count" id="count-done">17</span>
+            <span class="kanban-col-count" id="count-done">25</span>
           </div>
           <div class="kanban-cards">
+            <!-- ===== SPRINT 0 (Sem 1-2, Jan 6-17) ===== -->
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-devops">DevOps</span>
@@ -2151,13 +2153,46 @@
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
               </div>
             </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-design">Design</span>
+              </div>
+              <div class="kanban-card-title">Design system + composants UI de base</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Schema Prisma + migrations DB</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Backend NestJS core + module principal</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="ia">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-ia">IA</span>
               </div>
-              <div class="kanban-card-title">POC : test Claude API narrative coherence</div>
+              <div class="kanban-card-title">POC integration Claude API avec streaming narratif</div>
               <div class="kanban-card-footer">
-                <span class="kanban-card-points">3 pts</span>
+                <span class="kanban-card-points">5 pts</span>
                 <span class="kanban-card-sprint">Sprint 0</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
               </div>
@@ -2169,7 +2204,7 @@
               <div class="kanban-card-title">Authentification JWT (register + login) + Google OAuth</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 1</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
               </div>
             </div>
@@ -2177,24 +2212,37 @@
               <div class="kanban-card-labels">
                 <span class="kanban-label label-backend">Backend</span>
               </div>
-              <div class="kanban-card-title">Schema Prisma + migrations DB</div>
+              <div class="kanban-card-title">Module utilisateurs (profil, stats, leaderboard)</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">3 pts</span>
-                <span class="kanban-card-sprint">Sprint 1</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
               </div>
             </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend,design">
               <div class="kanban-card-labels">
-                <span class="kanban-label label-devops">DevOps</span>
+                <span class="kanban-label label-frontend">Frontend</span>
+                <span class="kanban-label label-design">Design</span>
               </div>
-              <div class="kanban-card-title">CI/CD deploiement Vercel + Render</div>
+              <div class="kanban-card-title">Pages auth : login + inscription + Google OAuth</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 1</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
               </div>
             </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-frontend">Frontend</span>
+              </div>
+              <div class="kanban-card-title">Landing page hero + sections + footer</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 0</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
+              </div>
+            </div>
+            <!-- ===== SPRINT 1 (Sem 3-4, Jan 20-31) ===== -->
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-backend">Backend</span>
@@ -2210,42 +2258,18 @@
               <div class="kanban-card-labels">
                 <span class="kanban-label label-backend">Backend</span>
               </div>
-              <div class="kanban-card-title">WebSocket : connexion, rooms, broadcast</div>
+              <div class="kanban-card-title">Cache service in-memory pour sessions et game state</div>
               <div class="kanban-card-footer">
-                <span class="kanban-card-points">8 pts</span>
+                <span class="kanban-card-points">3 pts</span>
                 <span class="kanban-card-sprint">Sprint 1</span>
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
               </div>
             </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend,design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-frontend">Frontend</span>
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Pages auth : login + inscription + Google OAuth</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 1</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="design">
-              <div class="kanban-card-labels">
-                <span class="kanban-label label-design">Design</span>
-              </div>
-              <div class="kanban-card-title">Design system + composants UI de base</div>
-              <div class="kanban-card-footer">
-                <span class="kanban-card-points">5 pts</span>
-                <span class="kanban-card-sprint">Sprint 1</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
-              </div>
-            </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend,ia">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-backend">Backend</span>
-                <span class="kanban-label label-ia">IA</span>
               </div>
-              <div class="kanban-card-title">Integration Claude API avec streaming</div>
+              <div class="kanban-card-title">WebSocket : connexion, rooms, broadcast</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">8 pts</span>
                 <span class="kanban-card-sprint">Sprint 1</span>
@@ -2263,18 +2287,40 @@
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
               </div>
             </div>
-            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="game,ia">
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend">
               <div class="kanban-card-labels">
-                <span class="kanban-label label-game">Game</span>
-                <span class="kanban-label label-ia">IA</span>
+                <span class="kanban-label label-frontend">Frontend</span>
               </div>
-              <div class="kanban-card-title">Boucle de jeu 6 phases (moteur)</div>
+              <div class="kanban-card-title">Dashboard utilisateur (accueil, mes parties, profil)</div>
               <div class="kanban-card-footer">
-                <span class="kanban-card-points">13 pts</span>
-                <span class="kanban-card-sprint">Sprint 2</span>
-                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">K</div>
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
               </div>
             </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-frontend">Frontend</span>
+              </div>
+              <div class="kanban-card-title">Pages catalogue et details scenarios</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="devops">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-devops">DevOps</span>
+              </div>
+              <div class="kanban-card-title">CI/CD deploiement Vercel + Render</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 1</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #fd79a8, #e84393);">Y</div>
+              </div>
+            </div>
+            <!-- ===== SPRINT 2 (Sem 5-6, Feb 2-13) ===== -->
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="game">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-game">Game</span>
@@ -2297,6 +2343,18 @@
                 <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">K</div>
               </div>
             </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="game,ia">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-game">Game</span>
+                <span class="kanban-label label-ia">IA</span>
+              </div>
+              <div class="kanban-card-title">Boucle de jeu 6 phases (moteur)</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">13 pts</span>
+                <span class="kanban-card-sprint">Sprint 2</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">K</div>
+              </div>
+            </div>
             <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend">
               <div class="kanban-card-labels">
                 <span class="kanban-label label-frontend">Frontend</span>
@@ -2313,6 +2371,39 @@
                 <span class="kanban-label label-frontend">Frontend</span>
               </div>
               <div class="kanban-card-title">Chat en temps reel in-game + whisper</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 2</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #74b9ff, #0984e3);">Y</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Notifications temps reel via WebSocket</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 2</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="backend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-backend">Backend</span>
+              </div>
+              <div class="kanban-card-title">Dashboard admin (stats, gestion users, ban)</div>
+              <div class="kanban-card-footer">
+                <span class="kanban-card-points">5 pts</span>
+                <span class="kanban-card-sprint">Sprint 2</span>
+                <div class="kanban-card-avatar" style="background: linear-gradient(135deg, #00b894, #55efc4);">S</div>
+              </div>
+            </div>
+            <div class="kanban-card" draggable="true" ondragstart="dragCard(event)" data-labels="frontend">
+              <div class="kanban-card-labels">
+                <span class="kanban-label label-frontend">Frontend</span>
+              </div>
+              <div class="kanban-card-title">Page admin frontend avec stats et ban system</div>
               <div class="kanban-card-footer">
                 <span class="kanban-card-points">5 pts</span>
                 <span class="kanban-card-sprint">Sprint 2</span>
